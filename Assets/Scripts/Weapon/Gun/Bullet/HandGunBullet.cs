@@ -1,17 +1,19 @@
 using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
 public class HandGunBullet : MonoBehaviour
 {
-    [SerializeField] private float speed = 20f;
+    [SerializeField] private float speed = 5f;
 
     IEnumerator Start()
     {
-        GetComponent<Rigidbody>().linearVelocity = transform.forward * speed;
-
         yield return new WaitForSeconds(3);
 
         Destroy(gameObject);
+    }
+
+    void Update()
+    {
+        transform.Translate(Vector3.forward * (speed * Time.deltaTime));
     }
 }
