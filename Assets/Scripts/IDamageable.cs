@@ -2,5 +2,5 @@ using UnityEngine;
 
 public interface IDamageable
 {
-    void Hit(Bullet other);
+    void Hit(Bullet bullet);
 }

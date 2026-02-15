@@ -1,8 +1,49 @@
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public abstract class Bullet : MonoBehaviour
 {
     [SerializeField] protected float speed = 5f;
     [SerializeField] protected float damage;
 
+    private float destroyTime;
+
+    private Vector3 direction = Vector3.forward;
+
+    public void Reflect()
+    {
+        direction = -direction;
+        SetDestroyTime();
+    }
+
+    void Awake()
+    {
+        SetDestroyTime();
+    }
+
+    private void SetDestroyTime()
+    {
+        destroyTime = Time.time + 3f;
+    }
+
+    void Update()
+    {
+        transform.Translate(direction * (speed * Time.deltaTime));
+        DestoryIfNeed();
+    }
+
+    private void DestoryIfNeed()
+    {
+        if (destroyTime < Time.time)
+        {
+            Destroy(gameObject);
+        }
+
+    }
+
+
+    void OnTriggerEnter(Collider other)
+    {
+        IDamageable damageable = other.GetComponent<IDamageable>();
+        damageable?.Hit(this);
+    }
 }

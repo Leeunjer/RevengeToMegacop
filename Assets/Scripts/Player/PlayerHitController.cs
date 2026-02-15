@@ -2,8 +2,42 @@ using UnityEngine;
 
 public class PlayerHitController : MonoBehaviour, IDamageable
 {
-    public void Hit(Bullet other)
+    private ParryController parryController = new ParryController();
+
+    // Update is called once per frame
+    void Update()
     {
-        Debug.Log("Hit!!!");
+        parryController.RemoveTooEarlyParries();
+        InputParry();
+    }
+
+    private void InputParry()
+    {
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            parryController.StackParry();
+        }
+    }
+
+    public void Hit(Bullet bullet)
+    {
+        if (parryController.CanParry())
+        {
+            Parry(bullet);
+            return;
+        }
+
+        TakeDamage();
+    }
+
+    private void Parry(Bullet bullet)
+    {
+        parryController.Parry();
+        bullet.Reflect();
+    }
+
+    private void TakeDamage()
+    {
+        Debug.Log("Take damage!");
     }
 }
