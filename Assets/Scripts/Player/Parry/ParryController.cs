@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+
 using UnityEngine;
 
 public class ParryController
@@ -20,12 +21,12 @@ public class ParryController
         queue.Dequeue();
     }
 
-    public void RemoveTooEarlyParries()
+    public void RemoveTooEarlyParries(float parryDuration = 0.5f)
     {
         while (0 < queue.Count)
         {
             ParryInfo info = queue.Peek();
-            if (info.time + 0.5f < Time.time)
+            if (info.time + parryDuration < Time.time)
             {
                 queue.Dequeue();
             }

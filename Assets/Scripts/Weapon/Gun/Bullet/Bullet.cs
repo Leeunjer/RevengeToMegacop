@@ -11,10 +11,9 @@ public abstract class Bullet : MonoBehaviour
 
     public void Reflect()
     {
-        Vector3 targetDirection = MousePositionGetter.GetMousePositionInWorld(transform.position) - transform.position;
+        Vector3 targetDirection = (MousePositionGetter.GetMousePositionInWorld(transform.position) - transform.position).normalized;
 
-        Debug.Log($"targetDirection: {targetDirection}");
-        transform.forward = new Vector3(targetDirection.x, 0, targetDirection.z).normalized;
+        transform.forward = new Vector3(targetDirection.x, 0, targetDirection.z);
         SetDestroyTime();
     }
 
