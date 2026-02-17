@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerMovementController : MonoBehaviour
 {
     [SerializeField] private CharacterController controller;
     [SerializeField] private float speed = 5f;
@@ -9,6 +9,13 @@ public class PlayerController : MonoBehaviour
 
     private float gravity = -9.81f;
     private Vector3 velocity;
+
+    public void Teleport(Vector3 targetPosition)
+    {
+        controller.enabled = false;
+        transform.position = targetPosition;
+        controller.enabled = true;
+    }
 
     void Awake()
     {
