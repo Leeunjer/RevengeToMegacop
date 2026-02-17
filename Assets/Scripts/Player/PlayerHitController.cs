@@ -14,18 +14,26 @@ public class PlayerHitController : MonoBehaviour, IDamageable
 
     private ParryController parryController = new ParryController();
 
+    private bool isGuarding = false;
+
     // Update is called once per frame
     void Update()
     {
         parryController.RemoveTooEarlyParries(parryDuration);
-        InputParry();
+        InputParryAndGuard();
     }
 
-    private void InputParry()
+    private void InputParryAndGuard()
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
             parryController.StackParry();
+            isGuarding = true;
+        }
+
+        if (Input.GetKeyUp(KeyCode.Q))
+        {
+            isGuarding = false;
         }
     }
 
@@ -34,6 +42,12 @@ public class PlayerHitController : MonoBehaviour, IDamageable
         if (CanParry(bullet))
         {
             Parry(bullet);
+            return;
+        }
+
+        if (CanGuard(bullet))
+        {
+            Guard(bullet);
             return;
         }
 
@@ -60,8 +74,18 @@ public class PlayerHitController : MonoBehaviour, IDamageable
 
     private void Parry(Bullet bullet)
     {
-        bullet.Reflect();
+        bullet.Reflect(true);
         parryController.Parry();
+    }
+
+    private bool CanGuard(Bullet bullet)
+    {
+        return IsBulletInFront(bullet) && isGuarding;
+    }
+
+    private void Guard(Bullet bullet)
+    {
+        bullet.Reflect(false);
     }
 
     private void TakeDamage()

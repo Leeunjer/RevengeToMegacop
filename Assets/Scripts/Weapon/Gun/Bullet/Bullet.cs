@@ -7,14 +7,23 @@ public abstract class Bullet : MonoBehaviour
 
     private float destroyTime;
 
-    private Vector3 direction = Vector3.forward;
-
-    public void Reflect()
+    public void Reflect(bool isParry)
     {
-        Vector3 targetDirection = (MousePositionGetter.GetMousePositionInWorld(transform.position) - transform.position).normalized;
+        Vector3 targetDirection = isParry ? GetParryDirection() : GetRandomDirection();
 
         transform.forward = new Vector3(targetDirection.x, 0, targetDirection.z);
-        SetDestroyTime();
+        SetDestroyTime(isParry ? 3f : 0.3f);
+    }
+
+    private Vector3 GetParryDirection()
+    {
+        return (MousePositionGetter.GetMousePositionInWorld(transform.position) - transform.position).normalized;
+    }
+
+    private Vector3 GetRandomDirection()
+    {
+        float randomDegree = Random.Range(-60f, 60f);
+        return Quaternion.Euler(0, randomDegree, 0) * GetParryDirection();
     }
 
     void Awake()
@@ -22,14 +31,14 @@ public abstract class Bullet : MonoBehaviour
         SetDestroyTime();
     }
 
-    private void SetDestroyTime()
+    private void SetDestroyTime(float destroyDelay = 3f)
     {
-        destroyTime = Time.time + 3f;
+        destroyTime = Time.time + destroyDelay;
     }
 
     void Update()
     {
-        transform.Translate(direction * (speed * Time.deltaTime));
+        transform.Translate(Vector3.forward * (speed * Time.deltaTime));
         DestoryIfNeed();
     }
 
@@ -39,7 +48,6 @@ public abstract class Bullet : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
     }
 
 
