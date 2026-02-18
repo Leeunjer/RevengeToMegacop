@@ -1,3 +1,5 @@
+using System.Collections;
+
 using UnityEngine;
 
 public abstract class GunWeapon : Weapon
@@ -12,6 +14,29 @@ public abstract class GunWeapon : Weapon
 
     [SerializeField] protected Transform firePoint;
 
+    [SerializeField] private float reloadTime = 2f;
+
+    private bool isReloading = false;
+
+    public bool CanFire()
+    {
+        return 0 < Ammo;
+    }
+
+    public void Reload()
+    {
+        if (isReloading) return;
+        isReloading = true;
+        StartCoroutine(ReloadCoroutine());
+    }
+
+    private IEnumerator ReloadCoroutine()
+    {
+        yield return new WaitForSeconds(reloadTime);
+        Ammo = MaxAmmo;
+        isReloading = false;
+    }
+
     protected override void Awake()
     {
         base.Awake();
@@ -23,14 +48,10 @@ public abstract class GunWeapon : Weapon
         if (CanFire()) Fire();
     }
 
-    protected bool CanFire()
-    {
-        return 0 < Ammo;
-    }
-
     private void Fire()
     {
+        Ammo--;
         Bullet bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation).GetComponent<Bullet>();
-        if(bullet != null) bullet.Speed = BulletSpeed;
+        if (bullet != null) bullet.Speed = BulletSpeed;
     }
 }

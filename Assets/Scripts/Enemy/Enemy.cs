@@ -64,6 +64,7 @@ public class Enemy : MonoBehaviour
 
     private void UseGunWeapon(GunWeapon gun)
     {
-        gun.TryUse();
+        if (gun.CanFire()) gun.TryUse();
+        else gun.Reload();
     }
 }
