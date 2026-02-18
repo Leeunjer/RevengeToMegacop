@@ -4,21 +4,66 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField] private Weapon weapon;
     [SerializeField] private Transform target;
+    [SerializeField] private float turnSpeed = 10f;
+
+    private Vector3 previousTargetPosition;
 
     void Update()
     {
         LookTarget();
-        weapon?.TryUse();
+        UseWeapon();
     }
 
     private void LookTarget()
     {
         if (target is null) return;
 
-        transform.LookAt(target);
         if (weapon is GunWeapon)
         {
-            weapon.transform.LookAt(target);
+            AimToTarget(weapon as GunWeapon);
         }
+        else
+        {
+            transform.LookAt(target);
+        }
+    }
+
+    private void AimToTarget(GunWeapon gun)
+    {
+        Vector3 targetVelocity = (target.position - previousTargetPosition) / Time.deltaTime;
+        previousTargetPosition = target.position;
+
+        Vector3 leadPosition = CalculateLeadPosition(gun, targetVelocity);
+
+        Vector3 directionToLead = leadPosition - gun.transform.position;
+        directionToLead.y = 0;
+
+        if (directionToLead != Vector3.zero)
+        {
+            Quaternion lookRotation = Quaternion.LookRotation(directionToLead);
+            transform.rotation = Quaternion.Lerp(transform.rotation, lookRotation, Time.deltaTime * turnSpeed);
+        }
+    }
+
+    private Vector3 CalculateLeadPosition(GunWeapon gun, Vector3 targetVelocity)
+    {
+        float distance = Vector3.Distance(gun.transform.position, target.position);
+
+        float timeToTarget = distance / gun.BulletSpeed;
+
+        return target.position + (targetVelocity * timeToTarget);
+    }
+
+    private void UseWeapon()
+    {
+        if (weapon is null) return;
+
+        if (weapon is GunWeapon) UseGunWeapon(weapon as GunWeapon);
+        else weapon.TryUse();
+    }
+
+    private void UseGunWeapon(GunWeapon gun)
+    {
+        gun.TryUse();
     }
 }
