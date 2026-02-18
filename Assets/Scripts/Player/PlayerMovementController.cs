@@ -25,10 +25,10 @@ public class PlayerMovementController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Gravity();
         InputDash();
         InputMove();
         InputRotation();
-        Gravity();
     }
 
     void InputDash()
