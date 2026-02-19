@@ -25,16 +25,25 @@ public class PlayerMovementController : MonoBehaviour
         controller.enabled = true;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void UpdateGravity()
     {
-        Gravity();
-        InputDash();
-        InputMove();
-        InputRotation();
+        if (controller.isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f;
+        }
+
+        velocity.y += gravity * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
     }
 
-    void InputDash()
+    public void HandleMovement()
+    {
+        HandleDash();
+        HandleMove();
+        HandleRotation();
+    }
+
+    private void HandleDash()
     {
         if (Input.GetKey(KeyCode.LeftShift))
         {
@@ -46,7 +55,7 @@ public class PlayerMovementController : MonoBehaviour
         }
     }
 
-    void InputMove()
+    private void HandleMove()
     {
         var h = Input.GetAxisRaw("Horizontal");
         var v = Input.GetAxisRaw("Vertical");
@@ -54,19 +63,8 @@ public class PlayerMovementController : MonoBehaviour
         controller.Move(dir * (realSpeed * Time.deltaTime));
     }
 
-    void InputRotation()
+    private void HandleRotation()
     {
         transform.LookAt(MousePositionGetter.GetMousePositionInWorld(transform.position));
-    }
-
-    void Gravity()
-    {
-        if (controller.isGrounded && velocity.y < 0)
-        {
-            velocity.y = -2f;
-        }
-
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
     }
 }

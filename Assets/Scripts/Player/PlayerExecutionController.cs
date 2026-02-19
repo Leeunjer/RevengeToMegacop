@@ -1,17 +1,17 @@
 using UnityEngine;
 
-[RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(PlayerMovementController))]
 [RequireComponent(typeof(PlayerStateController))]
 public class PlayerExecutionController : MonoBehaviour
 {
-    private CharacterController characterController;
+    private PlayerMovementController playerMovementController;
     private PlayerStateController playerStateController;
 
     [SerializeField] private LayerMask enemyLayerMask;
 
     void Awake()
     {
-        characterController = GetComponent<CharacterController>();
+        playerMovementController = GetComponent<PlayerMovementController>();
         playerStateController = GetComponent<PlayerStateController>();
     }
 
@@ -32,18 +32,11 @@ public class PlayerExecutionController : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-        HandleExecution();
-    }
-
     private void Execute(GameObject enemy)
     {
         Vector3 enemyPosition = enemy.transform.position;
         Destroy(enemy);
-        characterController.enabled = false;
-        transform.position = enemyPosition;
-        characterController.enabled = true;
+        playerMovementController.Teleport(enemyPosition);
         playerStateController.Executed();
     }
 }

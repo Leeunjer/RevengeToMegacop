@@ -18,18 +18,12 @@ public class PlayerShurikenController : MonoBehaviour
         controller = GetComponent<PlayerMovementController>();
     }
 
-    void Update()
-    {
-        UpdateCooldown();
-        InputThrowKey();
-    }
-
-    private void UpdateCooldown()
+    public void UpdateCooldown()
     {
         if (0 < currentCooldown) currentCooldown -= Time.deltaTime;
     }
 
-    private void InputThrowKey()
+    public void HandleShuriken()
     {
         if (Input.GetKeyDown(KeyCode.F))
         {

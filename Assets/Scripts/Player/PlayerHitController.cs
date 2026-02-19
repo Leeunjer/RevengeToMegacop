@@ -23,18 +23,12 @@ public class PlayerHitController : MonoBehaviour, IDamageable
         playerStateController = GetComponent<PlayerStateController>();
     }
 
-    void Update()
-    {
-        UpdateParries();
-        InputParryAndGuard();
-    }
-
     public void UpdateParries()
     {
         parryController.RemoveTooEarlyParries(parryDuration);
     }
 
-    public void InputParryAndGuard()
+    public void HandleHit()
     {
         if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.E))
         {
