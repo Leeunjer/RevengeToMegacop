@@ -1,15 +1,22 @@
 using UnityEngine;
 
+[RequireComponent(typeof(PlayerMovementController))]
 public class PlayerShurikenController : MonoBehaviour
 {
-    [SerializeField] private PlayerMovementController controller;
     [SerializeField] private GameObject shurikenPrefab;
     [SerializeField] private float coolTime = 3f;
+
+    private PlayerMovementController controller;
 
     private float currentCooldown;
 
     private GameObject shuriken = null;
 
+
+    void Awake()
+    {
+        controller = GetComponent<PlayerMovementController>();
+    }
 
     void Update()
     {
@@ -19,7 +26,7 @@ public class PlayerShurikenController : MonoBehaviour
 
     private void UpdateCooldown()
     {
-        if(0 < currentCooldown) currentCooldown -= Time.deltaTime;
+        if (0 < currentCooldown) currentCooldown -= Time.deltaTime;
     }
 
     private void InputThrowKey()
@@ -28,7 +35,7 @@ public class PlayerShurikenController : MonoBehaviour
         {
             if (InCoolTime()) return;
 
-            if(HasFlyingShuriken()) Teleport();
+            if (HasFlyingShuriken()) Teleport();
             else ThrowShuriken();
         }
     }

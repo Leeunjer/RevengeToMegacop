@@ -1,12 +1,23 @@
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour, IDamageable
 {
     [SerializeField] private Weapon weapon;
     [SerializeField] private Transform target;
     [SerializeField] private float turnSpeed = 10f;
+    [SerializeField] private float hp = 100f;
 
     private Vector3 previousTargetPosition;
+
+    public void Hit(Bullet bullet)
+    {
+        hp -= bullet.Damage;
+
+        if (hp <= 0)
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void Update()
     {
@@ -64,7 +75,6 @@ public class Enemy : MonoBehaviour
 
     private void UseGunWeapon(GunWeapon gun)
     {
-        if (gun.CanFire()) gun.TryUse();
-        else gun.Reload();
+        if (gun.CanFire()) gun.TryUse(); else gun.Reload();
     }
 }

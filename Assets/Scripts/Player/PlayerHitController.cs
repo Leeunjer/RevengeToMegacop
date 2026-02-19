@@ -2,9 +2,9 @@ using System;
 
 using UnityEngine;
 
+[RequireComponent(typeof(PlayerStateController))]
 public class PlayerHitController : MonoBehaviour, IDamageable
 {
-
     [Range(-1f, 1f)]
     [SerializeField]
     private float parryThreshold = 0.5f;
@@ -12,18 +12,29 @@ public class PlayerHitController : MonoBehaviour, IDamageable
     [SerializeField]
     private float parryDuration = 0.5f;
 
+    private PlayerStateController playerStateController;
+
     private ParryController parryController = new ParryController();
 
     private bool isGuarding = false;
 
-    // Update is called once per frame
+    void Awake()
+    {
+        playerStateController = GetComponent<PlayerStateController>();
+    }
+
     void Update()
     {
-        parryController.RemoveTooEarlyParries(parryDuration);
+        UpdateParries();
         InputParryAndGuard();
     }
 
-    private void InputParryAndGuard()
+    public void UpdateParries()
+    {
+        parryController.RemoveTooEarlyParries(parryDuration);
+    }
+
+    public void InputParryAndGuard()
     {
         if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.E))
         {
@@ -76,6 +87,7 @@ public class PlayerHitController : MonoBehaviour, IDamageable
     {
         bullet.Reflect(true);
         parryController.Parry();
+        playerStateController.IncreaseExecutionGauge();
     }
 
     private bool CanGuard(Bullet bullet)

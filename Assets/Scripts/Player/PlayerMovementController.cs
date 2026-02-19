@@ -1,25 +1,28 @@
 using UnityEngine;
 
+[RequireComponent(typeof(CharacterController))]
 public class PlayerMovementController : MonoBehaviour
 {
-    [SerializeField] private CharacterController controller;
     [SerializeField] private float speed = 5f;
+
+    private CharacterController controller;
 
     private float realSpeed = 0f;
 
     private float gravity = -9.81f;
     private Vector3 velocity;
 
+    void Awake()
+    {
+        controller = GetComponent<CharacterController>();
+        realSpeed = speed;
+    }
+
     public void Teleport(Vector3 targetPosition)
     {
         controller.enabled = false;
         transform.position = targetPosition;
         controller.enabled = true;
-    }
-
-    void Awake()
-    {
-        realSpeed = speed;
     }
 
     // Update is called once per frame

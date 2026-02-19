@@ -3,7 +3,7 @@ using UnityEngine;
 public abstract class Bullet : MonoBehaviour
 {
     public float Speed { get; set; }
-    [SerializeField] protected float damage;
+    [field: SerializeField] public float Damage { get; private set; }
 
     private float destroyTime;
 
