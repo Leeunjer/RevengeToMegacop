@@ -4,12 +4,14 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerHitController))]
 [RequireComponent(typeof(PlayerMovementController))]
 [RequireComponent(typeof(PlayerShurikenController))]
+[RequireComponent(typeof(PlayerStateController))]
 public class PlayerController : MonoBehaviour
 {
     private PlayerExecutionController playerExecutionController;
     private PlayerHitController playerHitController;
     private PlayerMovementController playerMovementController;
     private PlayerShurikenController playerShurikenController;
+    private PlayerStateController playerStateController;
 
     void Awake()
     {
@@ -17,6 +19,7 @@ public class PlayerController : MonoBehaviour
         playerHitController = GetComponent<PlayerHitController>();
         playerMovementController = GetComponent<PlayerMovementController>();
         playerShurikenController = GetComponent<PlayerShurikenController>();
+        playerStateController = GetComponent<PlayerStateController>();
     }
 
     void Update()
@@ -24,6 +27,7 @@ public class PlayerController : MonoBehaviour
         playerHitController.UpdateParries();
         playerMovementController.UpdateGravity();
         playerShurikenController.UpdateCooldown();
+        playerStateController.UpdateStamina();
 
         playerExecutionController.HandleExecution();
         playerHitController.HandleHit();

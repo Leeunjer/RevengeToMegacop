@@ -39,8 +39,33 @@ public class PlayerStateController : MonoBehaviour
     [SerializeField] private float executionGaugeIncreaseStep = 10f;
     public float ExecutionGaugeIncreaseStep { get => executionGaugeIncreaseStep; private set => executionGaugeIncreaseStep = value; }
 
+    [SerializeField] private float stamina;
+    public float Stamina
+    {
+        get => stamina;
+        private set
+        {
+            stamina = value;
+            if (stamina < 0)
+            {
+                stamina = 0;
+            }
+            NotifyUI();
+        }
+    }
+    [SerializeField] private float maxStamina = 100f;
+    public float MaxStamina { get => maxStamina; private set => maxStamina = value; }
+
+    [SerializeField] private float staminaRecoveryStep = 10f;
+
+    [SerializeField] private float staminaDecreaseStep = 10f;
+
+    [SerializeField] private float staminaRecoveryTimeStep = 0.5f;
+    private float currentStaminaRecoveryTime;
+
     public event Action<float> OnHpChanged;
     public event Action<float> OnExecutionGaugeChanged;
+    public event Action<float> OnStaminaChanged;
 
     public void TakeDamage(float damage)
     {
@@ -66,10 +91,41 @@ public class PlayerStateController : MonoBehaviour
         ExecutionGauge = 0;
     }
 
+    public void UpdateStamina()
+    {
+        currentStaminaRecoveryTime -= Time.deltaTime;
+        if (currentStaminaRecoveryTime <= 0)
+        {
+            Stamina += staminaRecoveryStep;
+            if (MaxStamina < Stamina)
+            {
+                Stamina = MaxStamina;
+            }
+            currentStaminaRecoveryTime = staminaRecoveryTimeStep;
+        }
+    }
+
+    public void DecreaseStamina()
+    {
+        Stamina -= staminaDecreaseStep;
+    }
+
+    public bool CanParry()
+    {
+        float parryStaminaCost = MaxStamina * 0.2f;
+        return parryStaminaCost <= Stamina;
+    }
+
+    public bool CanGuard()
+    {
+        return 0 < Stamina;
+    }
+
     private void NotifyUI()
     {
         OnHpChanged?.Invoke(Hp / MaxHp);
         OnExecutionGaugeChanged?.Invoke(ExecutionGauge / MaxExecutionGauge);
+        OnStaminaChanged?.Invoke(Stamina / MaxStamina);
     }
 
     void OnValidate()

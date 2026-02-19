@@ -61,7 +61,7 @@ public class PlayerHitController : MonoBehaviour, IDamageable
 
     private bool CanParry(Bullet bullet)
     {
-        return IsBulletInFront(bullet) && parryController.CanParry();
+        return IsBulletInFront(bullet) && parryController.CanParry() && playerStateController.CanParry();
     }
 
     private bool IsBulletInFront(Bullet bullet)
@@ -79,19 +79,20 @@ public class PlayerHitController : MonoBehaviour, IDamageable
 
     private void Parry(Bullet bullet)
     {
-        bullet.Reflect(true);
         parryController.Parry();
+        bullet.Reflect(true);
         playerStateController.IncreaseExecutionGauge();
     }
 
     private bool CanGuard(Bullet bullet)
     {
-        return IsBulletInFront(bullet) && isGuarding;
+        return IsBulletInFront(bullet) && isGuarding && playerStateController.CanGuard();
     }
 
     private void Guard(Bullet bullet)
     {
         bullet.Reflect(false);
+        playerStateController.DecreaseStamina();
     }
 
     private void TakeDamage()

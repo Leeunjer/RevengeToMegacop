@@ -4,6 +4,7 @@ public class UIController : MonoBehaviour
 {
     [SerializeField] private GameObject hp;
     [SerializeField] private GameObject executionGauge;
+    [SerializeField] private GameObject stamina;
     [SerializeField] private PlayerStateController playerStateController;
 
     void Start()
@@ -15,8 +16,10 @@ public class UIController : MonoBehaviour
         }
         playerStateController.OnHpChanged += UpdateHp;
         playerStateController.OnExecutionGaugeChanged += UpdateExecutionGauge;
+        playerStateController.OnStaminaChanged += UpdateStamina;
         UpdateHp(playerStateController.Hp / playerStateController.MaxHp);
         UpdateExecutionGauge(playerStateController.ExecutionGauge / playerStateController.MaxExecutionGauge);
+        UpdateStamina(playerStateController.Stamina / playerStateController.MaxStamina);
     }
 
     void OnDestroy()
@@ -25,6 +28,7 @@ public class UIController : MonoBehaviour
         {
             playerStateController.OnHpChanged -= UpdateHp;
             playerStateController.OnExecutionGaugeChanged -= UpdateExecutionGauge;
+            playerStateController.OnStaminaChanged -= UpdateStamina;
         }
     }
 
@@ -36,5 +40,10 @@ public class UIController : MonoBehaviour
     private void UpdateExecutionGauge(float ratio)
     {
         executionGauge.transform.localScale = new Vector3(ratio, 1, 1);
+    }
+
+    private void UpdateStamina(float ratio)
+    {
+        stamina.transform.localScale = new Vector3(ratio, 1, 1);
     }
 }
