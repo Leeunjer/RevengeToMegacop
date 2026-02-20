@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour, IDamageable
 {
@@ -8,6 +9,13 @@ public class Enemy : MonoBehaviour, IDamageable
     [SerializeField] private float hp = 100f;
 
     private Vector3 previousTargetPosition;
+
+    [SerializeField] private float moveSpeed = 3f;
+    [SerializeField] private bool useNavMesh = true;
+    private NavMeshAgent agent;
+
+    private enum State { Idle, MoveToTarget, Attack }
+    private State currentState = State.Idle;
 
     public void Hit(Bullet bullet)
     {
@@ -24,18 +32,27 @@ public class Enemy : MonoBehaviour, IDamageable
     void Start()
     {
         if (target != null) previousTargetPosition = target.position;
+        if (useNavMesh)
+        {
+            agent = GetComponent<NavMeshAgent>();
+            if (agent != null) agent.updateRotation = false;
+        }
     }
 
     void Update()
     {
+        if (target == null)
+        {
+            currentState = State.Idle;
+            return;
+        }
+
         LookTarget();
-        UseWeapon();
+        FSM();
     }
 
     private void LookTarget()
     {
-        if (target == null) return;
-
         if (weapon is GunWeapon gun)
         {
             AimToTarget(gun);
@@ -70,27 +87,75 @@ public class Enemy : MonoBehaviour, IDamageable
         return target.position + (targetVelocity * timeToTarget);
     }
 
-    private void UseWeapon()
+    private void FSM()
+    {
+        switch (currentState)
+        {
+            case State.Idle:
+                currentState = State.MoveToTarget;
+                break;
+
+            case State.MoveToTarget:
+                if (IsTargetInRange())
+                {
+                    currentState = State.Attack;
+                    if (agent != null) agent.ResetPath();
+                }
+                else
+                {
+                    MoveTowardsTarget();
+                }
+                break;
+
+            case State.Attack:
+                if (!IsTargetInRange())
+                {
+                    currentState = State.MoveToTarget;
+                }
+                else
+                {
+                    Attack();
+                }
+                break;
+        }
+    }
+
+    public bool IsTargetInRange()
+    {
+        float distance = Vector3.Distance(transform.position, target.position);
+        return distance <= weapon.Range;
+    }
+
+    private void MoveTowardsTarget()
+    {
+        if (useNavMesh && agent != null)
+        {
+            agent.SetDestination(target.position);
+        }
+        else
+        {
+            Vector3 dir = (target.position - transform.position).normalized;
+            transform.position += dir * moveSpeed * Time.deltaTime;
+        }
+    }
+
+    private void Attack()
     {
         if (weapon == null) return;
-
-        if (weapon is GunWeapon) UseGunWeapon(weapon as GunWeapon);
-        else weapon.TryUse();
-    }
-
-    private void UseGunWeapon(GunWeapon gun)
-    {
-        if (!IsTargetInRange(gun)) return;
-
-        if (gun.CanFire()) gun.TryUse(); else gun.Reload();
-    }
-
-    
-    public bool IsTargetInRange(GunWeapon gun)
-    {
-        if (target == null) return false;
-
-        float distance = Vector3.Distance(transform.position, target.position);
-        return distance <= gun.Range;
+        if (weapon is GunWeapon gun)
+        {
+            if (gun.CanFire())
+            {
+                gun.TryUse();
+            }
+            else
+            {
+                gun.Reload();
+            }
+        }
+        else
+        {
+            weapon.TryUse();
+        }
     }
 }

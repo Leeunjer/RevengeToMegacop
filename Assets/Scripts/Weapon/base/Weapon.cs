@@ -3,6 +3,8 @@ using UnityEngine;
 public abstract class Weapon : MonoBehaviour
 {
     [SerializeField] private float useDelay;
+
+    [field: SerializeField] public float Range { get; private set; }
     private float previousTime;
 
     protected virtual void Awake()

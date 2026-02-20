@@ -16,8 +16,6 @@ public abstract class GunWeapon : Weapon
 
     [SerializeField] private float reloadTime = 2f;
 
-    [field: SerializeField] public float Range { get; private set; }
-
     private bool isReloading = false;
 
     public bool CanFire()
