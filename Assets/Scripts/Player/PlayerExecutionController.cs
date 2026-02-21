@@ -28,7 +28,7 @@ public class PlayerExecutionController : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, enemyLayerMask))
         {
-            Execute(hit.collider.gameObject);
+            Execute(hit.collider.attachedRigidbody ? hit.collider.attachedRigidbody.gameObject : hit.collider.gameObject);
         }
     }
 
