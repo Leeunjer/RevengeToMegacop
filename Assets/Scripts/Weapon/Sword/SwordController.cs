@@ -11,7 +11,7 @@ public class SwordController : MonoBehaviour
 
     public void Throw(Vector3 position)
     {
-        targetPosition = position;
+        targetPosition = Vector3.Distance(transform.position, position) <= range ? position : transform.position + (position - transform.position).normalized * range;
     }
 
     void Start()
