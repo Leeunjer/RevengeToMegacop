@@ -17,6 +17,7 @@ public abstract class GunWeapon : Weapon
     [SerializeField] private float reloadTime = 2f;
 
     private bool isReloading = false;
+    private Coroutine reloadCoroutine;
 
     public bool CanFire()
     {
@@ -27,7 +28,12 @@ public abstract class GunWeapon : Weapon
     {
         if (isReloading) return;
         isReloading = true;
-        StartCoroutine(ReloadCoroutine());
+        reloadCoroutine = StartCoroutine(ReloadCoroutine());
+    }
+
+    void OnDestroy()
+    {
+        if (reloadCoroutine != null) StopCoroutine(reloadCoroutine);
     }
 
     private IEnumerator ReloadCoroutine()
@@ -61,6 +67,8 @@ public abstract class GunWeapon : Weapon
         }
         Ammo--;
         Bullet bullet = BulletPool.Instance.Get(bulletPrefab, firePoint.position, firePoint.rotation);
-        if (bullet != null) bullet.Speed = BulletSpeed;
+        if (bullet == null) return;
+        bullet.SetOwner(gameObject);
+        bullet.Speed = BulletSpeed;
     }
 }
