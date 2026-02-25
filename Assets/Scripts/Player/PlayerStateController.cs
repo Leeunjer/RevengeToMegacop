@@ -112,9 +112,11 @@ public class PlayerStateController : MonoBehaviour
         Stamina -= staminaDecreaseStep;
     }
 
+    [SerializeField] private float parryStaminaCostRatio = 0.2f;
+
     public bool CanParry()
     {
-        float parryStaminaCost = MaxStamina * 0.2f;
+        float parryStaminaCost = MaxStamina * parryStaminaCostRatio;
         return parryStaminaCost <= Stamina;
     }
 
