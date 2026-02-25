@@ -82,6 +82,16 @@ public class EnemySpawner : MonoBehaviour
         return pos;
     }
 
+    void OnDestroy()
+    {
+        foreach (GameObject enemyObj in spawnedEnemies)
+        {
+            if (enemyObj == null) continue;
+            Enemy enemy = enemyObj.GetComponent<Enemy>();
+            if (enemy != null) enemy.OnDeath -= OnDeath;
+        }
+    }
+
     private void OnDeath(GameObject enemyObj)
     {
         spawnedEnemies.Remove(enemyObj);
