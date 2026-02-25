@@ -6,10 +6,23 @@ public abstract class Bullet : MonoBehaviour
     [field: SerializeField] public float Damage { get; private set; }
 
     private float destroyTime;
-
     private bool isReflected = false;
-
     private GameObject owner;
+    private GameObject prefab;
+
+    internal void SetPrefab(GameObject prefab)
+    {
+        this.prefab = prefab;
+    }
+
+    // 풀에서 꺼낼 때마다 호출되어 상태를 초기화한다
+    public void Prepare()
+    {
+        Speed = 0f;
+        isReflected = false;
+        owner = null;
+        SetDestroyTime();
+    }
 
     public void SetOwner(GameObject owner)
     {
@@ -37,11 +50,6 @@ public abstract class Bullet : MonoBehaviour
         return Quaternion.Euler(0, randomDegree, 0) * GetParryDirection();
     }
 
-    void Awake()
-    {
-        SetDestroyTime();
-    }
-
     private void SetDestroyTime(float destroyDelay = 3f)
     {
         destroyTime = Time.time + destroyDelay;
@@ -50,15 +58,7 @@ public abstract class Bullet : MonoBehaviour
     void Update()
     {
         transform.Translate(Vector3.forward * (Speed * Time.deltaTime));
-        DestoryIfNeed();
-    }
-
-    private void DestoryIfNeed()
-    {
-        if (destroyTime < Time.time)
-        {
-            Remove();
-        }
+        if (destroyTime < Time.time) Remove();
     }
 
     void OnTriggerEnter(Collider other)
@@ -75,6 +75,6 @@ public abstract class Bullet : MonoBehaviour
 
     public void Remove()
     {
-        Destroy(gameObject);
+        BulletPool.Instance.Release(prefab, this);
     }
 }

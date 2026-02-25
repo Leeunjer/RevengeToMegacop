@@ -60,7 +60,7 @@ public abstract class GunWeapon : Weapon
             return;
         }
         Ammo--;
-        Bullet bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation).GetComponent<Bullet>();
+        Bullet bullet = BulletPool.Instance.Get(bulletPrefab, firePoint.position, firePoint.rotation);
         if (bullet != null) bullet.Speed = BulletSpeed;
     }
 }
