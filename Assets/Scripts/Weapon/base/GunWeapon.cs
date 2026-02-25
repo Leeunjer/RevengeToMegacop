@@ -18,6 +18,7 @@ public abstract class GunWeapon : Weapon
 
     private bool isReloading = false;
     private Coroutine reloadCoroutine;
+    private WaitForSeconds waitForReload;
 
     public bool CanFire()
     {
@@ -38,7 +39,7 @@ public abstract class GunWeapon : Weapon
 
     private IEnumerator ReloadCoroutine()
     {
-        yield return new WaitForSeconds(reloadTime);
+        yield return waitForReload;
         Ammo = MaxAmmo;
         isReloading = false;
     }
@@ -46,6 +47,7 @@ public abstract class GunWeapon : Weapon
     protected override void Awake()
     {
         base.Awake();
+        waitForReload = new WaitForSeconds(reloadTime);
         if (MaxAmmo < Ammo) Ammo = MaxAmmo;
         if (bulletPrefab == null || firePoint == null)
         {
