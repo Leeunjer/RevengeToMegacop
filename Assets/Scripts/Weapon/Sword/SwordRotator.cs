@@ -7,6 +7,7 @@ public class SwordRotator : MonoBehaviour
 
     void Update()
     {
+        if (sword == null) return;
         sword.Rotate(Vector3.up, 360f * rotationSpeed * Time.deltaTime);
     }
 }
