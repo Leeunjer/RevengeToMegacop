@@ -22,6 +22,6 @@ public static class MousePositionGetter
             return hitPoint;
         }
 
-        return Vector3.zero;
+        return target;
     }
 }
