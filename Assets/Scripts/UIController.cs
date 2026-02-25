@@ -9,7 +9,7 @@ public class UIController : MonoBehaviour
 
     void Start()
     {
-        if (hp == null || executionGauge == null || playerStateController == null)
+        if (hp == null || executionGauge == null || stamina == null || playerStateController == null)
         {
             Debug.LogError("One or more required components are not assigned in UIController.");
             return;
