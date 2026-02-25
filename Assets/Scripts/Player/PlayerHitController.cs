@@ -57,7 +57,7 @@ public class PlayerHitController : MonoBehaviour, IDamageable
             return;
         }
 
-        TakeDamage();
+        TakeDamage(bullet);
     }
 
     private bool CanParry(Bullet bullet)
@@ -96,8 +96,9 @@ public class PlayerHitController : MonoBehaviour, IDamageable
         playerStateController.DecreaseStamina();
     }
 
-    private void TakeDamage()
+    private void TakeDamage(Bullet bullet)
     {
+        playerStateController.TakeDamage(bullet.Damage);
     }
 
     void OnDrawGizmosSelected()
