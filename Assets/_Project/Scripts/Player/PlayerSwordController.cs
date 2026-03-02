@@ -20,6 +20,11 @@ public class PlayerSwordController : MonoBehaviour
         if (throwSwordAction.WasPressedThisFrame())
         {
             if (InCooldown()) return;
+            if (swordPrefab == null)
+            {
+                Debug.LogWarning("PlayerSwordController: swordPrefab is not assigned.");
+                return;
+            }
 
             lastThrowTime = Time.time;
 
