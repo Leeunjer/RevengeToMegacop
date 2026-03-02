@@ -15,6 +15,11 @@ You have comprehensive understanding of:
 - Unity-specific anti-patterns and common pitfalls that cause bugs or performance degradation
 - Editor scripting, custom inspectors, and tooling best practices
 
+**Review Scope**:
+- **변경된 파일만 리뷰한다.** `git diff --name-only HEAD~1` 또는 parent process가 전달한 파일 목록만 대상으로 한다.
+- 전체 프로젝트 리뷰가 필요한 경우 parent process가 명시적으로 "전체 리뷰"를 요청해야 한다.
+- 변경된 파일이 다른 파일에 의존하는 경우, 의존 파일은 읽되 리뷰 대상에는 포함하지 않는다.
+
 **Documentation References**:
 - Check `CLAUDE.md` for project-specific architecture decisions and conventions
 - Look for task context in `./dev/active/[task-name]/` if reviewing task-related code
