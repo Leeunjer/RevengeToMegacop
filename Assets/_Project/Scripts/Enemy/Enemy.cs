@@ -110,6 +110,7 @@ public class Enemy : MonoBehaviour, IDamageable
 
     private Vector3 CalculateLeadPosition(GunWeapon gun, Vector3 targetVelocity)
     {
+        if (gun.BulletSpeed <= 0f) return target.position;
         float distance = Vector3.Distance(gun.transform.position, target.position);
         float timeToTarget = distance / gun.BulletSpeed;
         return target.position + (targetVelocity * timeToTarget);

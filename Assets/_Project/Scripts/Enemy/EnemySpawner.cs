@@ -34,6 +34,12 @@ public class EnemySpawner : MonoBehaviour
         Quaternion rot = Quaternion.identity;
         GameObject enemyObj = Instantiate(enemyPrefab, pos, rot, transform);
         Enemy enemy = enemyObj.GetComponent<Enemy>();
+        if (enemy == null)
+        {
+            Debug.LogWarning("EnemySpawner: Spawned prefab is missing Enemy component. Destroying.");
+            Destroy(enemyObj);
+            return;
+        }
 
         if (weaponPrefabs != null && weaponPrefabs.Count > 0)
         {
@@ -53,13 +59,10 @@ public class EnemySpawner : MonoBehaviour
             }
         }
 
-        if (enemy != null)
+        enemy.OnDeath += OnDeath;
+        if (target != null)
         {
-            enemy.OnDeath += OnDeath;
-            if (target != null)
-            {
-                enemy.SetTarget(target);
-            }
+            enemy.SetTarget(target);
         }
 
         spawnedEnemies.Add(enemyObj);
