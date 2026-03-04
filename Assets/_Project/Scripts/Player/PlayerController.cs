@@ -58,10 +58,12 @@ public class PlayerController : MonoBehaviour
         playerShurikenController.UpdateCooldown();
         playerStateController.UpdateStamina();
 
-        playerExecutionController.HandleExecution();
+        if (playerMovementController.IsExecutionDashing) return;
+
         playerHitController.HandleHit();
         playerMovementController.HandleMovement();
         playerShurikenController.HandleShuriken();
         playerSwordController.HandleSword();
+        playerExecutionController.HandleExecution();
     }
 }

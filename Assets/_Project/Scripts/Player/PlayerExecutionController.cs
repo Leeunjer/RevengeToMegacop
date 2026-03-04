@@ -10,6 +10,7 @@ public class PlayerExecutionController : MonoBehaviour
 
     [SerializeField] private LayerMask enemyLayerMask;
     [SerializeField] private float executionRange = 50f;
+    [SerializeField] private TrailRenderer executionTrail;
 
     private InputAction attackAction;
     private Camera mainCamera;
@@ -47,8 +48,15 @@ public class PlayerExecutionController : MonoBehaviour
     {
         if (enemy == null) return;
         Vector3 enemyPosition = enemy.transform.position;
-        if(enemy.TryGetComponent<Enemy>(out var e)) e.Die();
-        playerMovementController.Teleport(enemyPosition);
+        if (enemy.TryGetComponent<Enemy>(out var e)) e.Die();
+
+        if (executionTrail != null) executionTrail.emitting = true;
+        playerMovementController.ExecutionDash(enemyPosition, OnExecutionDashComplete);
         playerStateController.Executed();
+    }
+
+    private void OnExecutionDashComplete()
+    {
+        if (executionTrail != null) executionTrail.emitting = false;
     }
 }

@@ -1,3 +1,6 @@
+using System;
+using System.Collections;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -5,12 +8,16 @@ using UnityEngine.InputSystem;
 public class PlayerMovementController : MonoBehaviour
 {
     [SerializeField] private float speed = 5f;
+    [SerializeField] private float executionDashSpeed = 80f;
 
     private CharacterController controller;
 
     private float realSpeed = 0f;
 
     private bool isMoving;
+    private bool isExecutionDashing;
+
+    public bool IsExecutionDashing => isExecutionDashing;
 
     private InputAction moveAction;
     private InputAction sprintAction;
@@ -48,6 +55,8 @@ public class PlayerMovementController : MonoBehaviour
 
     public void UpdateGravity()
     {
+        if (isExecutionDashing) return;
+
         if (controller.isGrounded && velocity.y < 0)
         {
             velocity.y = -2f;
@@ -80,5 +89,27 @@ public class PlayerMovementController : MonoBehaviour
     private void HandleRotation()
     {
         transform.LookAt(MousePositionGetter.GetMousePositionInWorld(transform.position));
+    }
+
+    public void ExecutionDash(Vector3 target, Action onComplete)
+    {
+        StartCoroutine(ExecutionDashCoroutine(target, onComplete));
+    }
+
+    private IEnumerator ExecutionDashCoroutine(Vector3 target, Action onComplete)
+    {
+        isExecutionDashing = true;
+        controller.enabled = false;
+
+        while (Vector3.Distance(transform.position, target) > 0.1f)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, target, executionDashSpeed * Time.deltaTime);
+            yield return null;
+        }
+
+        transform.position = target;
+        controller.enabled = true;
+        isExecutionDashing = false;
+        onComplete?.Invoke();
     }
 }
