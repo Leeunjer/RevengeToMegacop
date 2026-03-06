@@ -100,6 +100,7 @@ public class PlayerMovementController : MonoBehaviour
     {
         isExecutionDashing = true;
         controller.enabled = false;
+        target.y = 1f;
 
         while (Vector3.Distance(transform.position, target) > 0.1f)
         {
