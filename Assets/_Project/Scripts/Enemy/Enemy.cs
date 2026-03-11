@@ -9,7 +9,8 @@ public class Enemy : MonoBehaviour, IDamageable
     private Weapon weapon;
     private Transform target;
     [SerializeField] private float turnSpeed = 10f;
-    [SerializeField] private float hp = 100f;
+    [SerializeField] private float maxHp = 100f;
+    private float hp;
 
     private Vector3 previousTargetPosition;
 
@@ -21,14 +22,37 @@ public class Enemy : MonoBehaviour, IDamageable
     private State currentState = State.Idle;
 
     public event Action<GameObject> OnDeath;
+    public event Action<float> OnHpChanged;
 
     private bool isDead = false;
 
-    public void Hit(Bullet bullet)
+    public float MaxHp => maxHp;
+    public float Hp => hp;
+    public float HpRatio => maxHp > 0f ? hp / maxHp : 0f;
+    /// <summary>
+    /// 자식 클래스에서 현재 추적 대상(플레이어)에 접근할 때 사용한다.
+    /// </summary>
+    public Transform Target => target;
+
+    /// <summary>
+    /// 자식 클래스에서 HP를 직접 변경할 때 사용한다. OnHpChanged 이벤트를 자동으로 발행한다.
+    /// </summary>
+    protected void SetHp(float value)
+    {
+        hp = value;
+        OnHpChanged?.Invoke(HpRatio);
+    }
+
+    /// <summary>
+    /// 피격 처리. 자식 클래스에서 override하여 피격 로직을 변경할 수 있다.
+    /// </summary>
+    public virtual void Hit(Bullet bullet)
     {
         if (bullet == null) return;
 
         hp -= bullet.Damage;
+
+        OnHpChanged?.Invoke(HpRatio);
 
         if (hp <= 0)
         {
@@ -36,7 +60,11 @@ public class Enemy : MonoBehaviour, IDamageable
         }
     }
 
-    public void Die()
+    /// <summary>
+    /// 사망 처리. 자식 클래스에서 override하여 사망 연출을 추가할 수 있다.
+    /// override 시 base.Die()를 호출해야 OnDeath 이벤트 발행 및 오브젝트 파괴가 수행된다.
+    /// </summary>
+    public virtual void Die()
     {
         if (isDead) return;
         isDead = true;
@@ -57,8 +85,12 @@ public class Enemy : MonoBehaviour, IDamageable
         target = t;
     }
 
-    void Start()
+    /// <summary>
+    /// 초기화. 자식 클래스에서 override할 경우 base.Start()를 호출해야 HP 초기화 등이 수행된다.
+    /// </summary>
+    protected virtual void Start()
     {
+        hp = maxHp;
         if (target != null) previousTargetPosition = target.position;
         if (useNavMesh)
         {
@@ -67,7 +99,10 @@ public class Enemy : MonoBehaviour, IDamageable
         }
     }
 
-    void Update()
+    /// <summary>
+    /// 매 프레임 타겟 조준 및 FSM을 실행한다. 자식 클래스에서 override하여 독자적인 업데이트 루프를 사용할 수 있다.
+    /// </summary>
+    protected virtual void Update()
     {
         if (target == null)
         {
