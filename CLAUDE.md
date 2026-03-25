@@ -6,15 +6,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **RevengeToMegacop** is a Unity 3D top-down action game where the player fights waves of enemies using guns, a throwable sword, and a teleporting shuriken. The player can parry/guard bullets and execute weakened enemies.
 
-- Unity version: 2022.3.x
+- Unity version: 6000.0.67f1 (Unity 6)
 - Language: C# (global namespace, no custom namespaces)
 
 ## Build & Test Commands
 
 Set the Unity editor path first:
 ```bash
-export UNITY_PATH="/Applications/Unity/Hub/Editor/2022.3.5f1/Unity.app/Contents/MacOS/Unity"
-# Windows: UNITY_PATH="C:\\Program Files\\Unity\\Hub\\Editor\\2022.3.5f1\\Editor\\Unity.exe"
+export UNITY_PATH="/Applications/Unity/Hub/Editor/6000.0.67f1/Unity.app/Contents/MacOS/Unity"
+# Windows: UNITY_PATH="C:\\Program Files\\Unity\\Hub\\Editor\\6000.0.67f1\\Editor\\Unity.exe"
 ```
 
 **Build:**
