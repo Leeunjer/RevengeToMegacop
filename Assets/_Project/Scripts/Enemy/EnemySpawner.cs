@@ -12,6 +12,7 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private float spawnInterval = 10f;
     [SerializeField] private float spawnArea = 100f;
     [SerializeField] private int maxEnemies = 10;
+    [SerializeField] private float minSpawnDistance = 10f;
 
     private float timer = 0f;
     private HashSet<GameObject> spawnedEnemies = new HashSet<GameObject>();
@@ -78,10 +79,10 @@ public class EnemySpawner : MonoBehaviour
         if (target == null) return pos;
 
         float dist = Vector3.Distance(pos, target.position);
-        if (dist < 10f)
+        if (dist < minSpawnDistance)
         {
             Vector3 dir = (pos - target.position).normalized;
-            pos = target.position + dir * 10.1f;
+            pos = target.position + dir * (minSpawnDistance + 0.1f);
             pos.y = 0f;
         }
 

@@ -9,6 +9,8 @@ public class PlayerMovementController : MonoBehaviour
 {
     [SerializeField] private float speed = 5f;
     [SerializeField] private float executionDashSpeed = 80f;
+    [SerializeField] private float groundY = 1f;
+    [SerializeField] private float executionArrivalThreshold = 0.1f;
 
     private CharacterController controller;
 
@@ -47,7 +49,7 @@ public class PlayerMovementController : MonoBehaviour
             Debug.LogWarning("PlayerMovementController: Teleport targetPosition is invalid.");
             return;
         }
-        targetPosition.y = 1f;
+        targetPosition.y = groundY;
         controller.enabled = false;
         transform.position = targetPosition;
         controller.enabled = true;
@@ -100,9 +102,9 @@ public class PlayerMovementController : MonoBehaviour
     {
         isExecutionDashing = true;
         controller.enabled = false;
-        target.y = 1f;
+        target.y = groundY;
 
-        while (Vector3.Distance(transform.position, target) > 0.1f)
+        while (Vector3.Distance(transform.position, target) > executionArrivalThreshold)
         {
             transform.position = Vector3.MoveTowards(transform.position, target, executionDashSpeed * Time.deltaTime);
             yield return null;
