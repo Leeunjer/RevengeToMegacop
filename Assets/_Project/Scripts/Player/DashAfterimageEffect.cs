@@ -6,6 +6,7 @@ public class DashAfterimageEffect : MonoBehaviour
     [SerializeField] private float spawnInterval = 0.05f;
     [SerializeField] private float fadeDuration = 0.3f;
     [SerializeField] private Color afterimageColor = new Color(1f, 1f, 1f, 0.5f);
+    [SerializeField] private Shader unlitShader;
 
     private PlayerMovementController movementController;
 
@@ -62,11 +63,9 @@ public class DashAfterimageEffect : MonoBehaviour
         int maxConcurrentSpawns = Mathf.CeilToInt(fadeDuration / spawnInterval) + 1;
         int poolSize = maxConcurrentSpawns * meshEntries.Length;
 
-        // Shader.Find는 여기서 딱 한 번만 호출한다.
-        Shader unlitShader = Shader.Find("Universal Render Pipeline/Unlit");
         if (unlitShader == null)
         {
-            Debug.LogError("DashAfterimageEffect: Could not find URP Unlit shader. Afterimage effect disabled.");
+            Debug.LogError("DashAfterimageEffect: unlitShader is not assigned. Afterimage effect disabled.");
             enabled = false;
             return;
         }

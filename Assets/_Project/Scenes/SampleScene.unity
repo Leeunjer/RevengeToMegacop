@@ -946,6 +946,7 @@ MonoBehaviour:
   spawnInterval: 3
   spawnArea: 70
   maxEnemies: 3
+  minSpawnDistance: 10
 --- !u!4 &1473619429
 Transform:
   m_ObjectHideFlags: 0
@@ -1172,6 +1173,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   executionDashSpeed: 80
+  groundY: 1
+  executionArrivalThreshold: 0.1
 --- !u!114 &1700423673
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1284,6 +1287,7 @@ MonoBehaviour:
   spawnInterval: 0.05
   fadeDuration: 0.3
   afterimageColor: {r: 1, g: 1, b: 1, a: 0.5}
+  unlitShader: {fileID: 4800000, guid: 650dd9526735d5b46b79224bc6e94025, type: 3}
 --- !u!96 &1700423680
 TrailRenderer:
   serializedVersion: 3
