@@ -30,6 +30,7 @@ public class BulletPool : MonoBehaviour
         Bullet bullet = GetOrCreatePool(prefab).Get();
         bullet.transform.SetPositionAndRotation(position, rotation);
         bullet.Prepare();
+        bullet.gameObject.SetActive(true);
         return bullet;
     }
 
@@ -54,7 +55,7 @@ public class BulletPool : MonoBehaviour
                 bullet.SetPrefab(prefab);
                 return bullet;
             },
-            actionOnGet: bullet => bullet.gameObject.SetActive(true),
+            actionOnGet: _ => { },
             actionOnRelease: bullet => bullet.gameObject.SetActive(false),
             actionOnDestroy: bullet => Destroy(bullet.gameObject),
             defaultCapacity: 20,
