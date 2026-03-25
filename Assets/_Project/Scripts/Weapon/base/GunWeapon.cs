@@ -59,7 +59,7 @@ public abstract class GunWeapon : Weapon
     {
         base.Awake();
         waitForReload = new WaitForSeconds(reloadTime);
-        if (MaxAmmo < Ammo) Ammo = MaxAmmo;
+        Ammo = MaxAmmo;
         if (bulletPrefab == null || firePoint == null)
         {
             Debug.LogWarning("GunWeapon: bulletPrefab or firePoint is not assigned.");
