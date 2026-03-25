@@ -49,7 +49,7 @@ public class BossUI : MonoBehaviour
 
     void OnDestroy()
     {
-        if (boss != null)
+        if (!ReferenceEquals(boss, null))
         {
             boss.OnHpChanged -= UpdateHpBar;
             boss.OnDeath -= OnBossDied;
