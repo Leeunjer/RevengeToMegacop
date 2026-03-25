@@ -123,18 +123,27 @@ public abstract class BossEnemy : Enemy
 
         float roll = UnityEngine.Random.Range(0f, totalWeight);
         float cumulative = 0f;
+        int lastCandidate = -1;
 
         for (int i = 0; i < currentPatterns.Length; i++)
         {
             if (!currentPatterns[i].CanExecute()) continue;
 
             cumulative += currentPatterns[i].Weight;
+            lastCandidate = i;
             if (roll <= cumulative)
             {
                 bossState = BossState.PatternExecuting;
                 currentPatterns[i].Execute(this, OnPatternComplete);
                 return;
             }
+        }
+
+        // 부동소수점 오차로 선택이 안 된 경우 마지막 유효 패턴 실행
+        if (lastCandidate >= 0)
+        {
+            bossState = BossState.PatternExecuting;
+            currentPatterns[lastCandidate].Execute(this, OnPatternComplete);
         }
     }
 
