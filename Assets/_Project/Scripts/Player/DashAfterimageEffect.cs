@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(PlayerMovementController))]
 public class DashAfterimageEffect : MonoBehaviour
 {
     [SerializeField] private float spawnInterval = 0.05f;
