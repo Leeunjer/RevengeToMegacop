@@ -91,8 +91,6 @@ public abstract class BossEnemy : Enemy
     /// </summary>
     protected override void Update()
     {
-        if (Target != null) LookTarget();
-
         if (bossState == BossState.Active && Time.time >= nextPatternTime)
         {
             ExecuteNextPattern();
