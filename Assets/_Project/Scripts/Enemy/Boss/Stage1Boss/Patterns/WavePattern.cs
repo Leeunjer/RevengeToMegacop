@@ -14,5 +14,6 @@ public class WavePattern : BossPattern
         // TODO: 원형 파동을 방출하는 로직 구현
 
         yield return null;
+        onComplete?.Invoke();
     }
 }

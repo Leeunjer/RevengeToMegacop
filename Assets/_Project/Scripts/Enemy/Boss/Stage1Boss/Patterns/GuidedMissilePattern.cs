@@ -12,7 +12,8 @@ public class GuidedMissilePattern : BossPattern
     private IEnumerator LaunchGuidedMissiles(BossEnemy boss, Action onComplete)
     {
         // TODO: 유도탄을 3연발사하는 로직 구현
-        
+
         yield return null;
+        onComplete?.Invoke();
     }
 }

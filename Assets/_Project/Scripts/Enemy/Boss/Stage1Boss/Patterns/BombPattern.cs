@@ -14,5 +14,6 @@ public class BombPattern : BossPattern
         // TODO: 포물선으로 폭탄을 던지는 로직 구현
 
         yield return null;
+        onComplete?.Invoke();
     }
 }
