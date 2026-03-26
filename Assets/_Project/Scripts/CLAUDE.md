@@ -7,6 +7,7 @@
 - One class per file; filename must match class name
 - No namespaces — all classes are in the global namespace
 - `System` usings before `UnityEngine` usings; remove unused usings
+- **No abbreviated variable names** — write the full word every time. `skillController` not `sc`, `enemy` not `e`, `gameObject` not `go`. This applies to loop variables, temporaries, and all local variables.
 
 ## Architecture
 
