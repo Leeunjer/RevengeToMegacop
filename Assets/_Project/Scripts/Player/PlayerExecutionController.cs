@@ -11,9 +11,12 @@ public class PlayerExecutionController : MonoBehaviour
     [SerializeField] private LayerMask enemyLayerMask;
     [SerializeField] private float executionRange = 50f;
     [SerializeField] private TrailRenderer executionTrail;
+    [SerializeField] private ExecutionSliceEffect executionSliceEffect;
 
     private InputAction attackAction;
     private Camera mainCamera;
+
+    private Enemy executionTarget;
 
     void Awake()
     {
@@ -48,7 +51,8 @@ public class PlayerExecutionController : MonoBehaviour
     {
         if (enemy == null) return;
         Vector3 enemyPosition = enemy.transform.position;
-        if (enemy.TryGetComponent<Enemy>(out var e)) e.Die();
+
+        executionTarget = enemy.TryGetComponent<Enemy>(out var enemyComponent) ? enemyComponent : null;
 
         if (executionTrail != null) executionTrail.emitting = true;
         playerMovementController.ExecutionDash(enemyPosition, OnExecutionDashComplete);
@@ -58,5 +62,20 @@ public class PlayerExecutionController : MonoBehaviour
     private void OnExecutionDashComplete()
     {
         if (executionTrail != null) executionTrail.emitting = false;
+
+        if (executionTarget != null)
+        {
+            // 슬라이스 방향: 플레이어 진행 방향의 수직 (좌우 절단)
+            Vector3 sliceNormal = transform.right;
+            Vector3 slicePosition = executionTarget.transform.position;
+
+            if (executionSliceEffect != null)
+            {
+                executionSliceEffect.Slice(executionTarget.gameObject, slicePosition, sliceNormal);
+            }
+
+            executionTarget.Die();
+            executionTarget = null;
+        }
     }
 }

@@ -1,0 +1,239 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+/// <summary>
+/// 처형 시 적 오브젝트를 평면 기준으로 두 조각으로 분할하고,
+/// Rigidbody를 부여하여 물리적으로 날려보내는 연출 효과.
+/// MeshFilter(플레이스홀더)와 SkinnedMeshRenderer(캐릭터 모델) 모두 지원한다.
+/// </summary>
+public class ExecutionSliceEffect : MonoBehaviour
+{
+    [Header("슬라이스 설정")]
+    [SerializeField] private float separationForce = 8f;
+    [SerializeField] private float upwardForce = 3f;
+    [SerializeField] private float torqueForce = 5f;
+
+    [Header("단면 머티리얼")]
+    [SerializeField] private Material crossSectionMaterial;
+
+    [Header("정리")]
+    [SerializeField] private float destroyDelay = 3f;
+    [SerializeField] private float fadeStartTime = 1.5f;
+
+    [Header("URP 셰이더 (crossSectionMaterial 미지정 시 사용)")]
+    [SerializeField] private Shader unlitShader;
+
+    private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
+
+    /// <summary>
+    /// 대상 오브젝트를 슬라이스한다. sliceNormal은 월드 좌표 기준 절단 방향.
+    /// 호출 후 원본 오브젝트는 비활성화된다 (파괴는 호출자가 관리).
+    /// </summary>
+    public void Slice(GameObject target, Vector3 slicePosition, Vector3 sliceNormal)
+    {
+        if (target == null) return;
+
+        // 자식 포함 모든 렌더러에서 슬라이스 가능한 메시 수집
+        List<SliceSource> sources = CollectSliceSources(target);
+        if (sources.Count == 0) return;
+
+        // 원본 비활성화
+        target.SetActive(false);
+
+        foreach (SliceSource source in sources)
+        {
+            // 월드 평면을 메시의 로컬 좌표로 변환
+            Vector3 localPosition = source.worldToLocal.MultiplyPoint3x4(slicePosition);
+            Vector3 localNormal = source.worldToLocal.MultiplyVector(sliceNormal).normalized;
+            Plane localPlane = new Plane(localNormal, localPosition);
+
+            MeshSlicer.SlicedMesh slicedMesh = MeshSlicer.Slice(source.mesh, localPlane);
+            if (slicedMesh == null) continue;
+
+            Material[] originalMaterials = source.materials;
+            Material capMaterial = GetCrossSectionMaterial();
+
+            // upper (평면 법선 방향)
+            GameObject upperHalf = CreateSliceHalf(
+                "SliceUpper", slicedMesh.upperMesh,
+                source.worldPosition, source.worldRotation, source.worldScale,
+                originalMaterials, capMaterial,
+                sliceNormal * separationForce + Vector3.up * upwardForce
+            );
+
+            // lower (평면 법선 반대 방향)
+            GameObject lowerHalf = CreateSliceHalf(
+                "SliceLower", slicedMesh.lowerMesh,
+                source.worldPosition, source.worldRotation, source.worldScale,
+                originalMaterials, capMaterial,
+                -sliceNormal * separationForce + Vector3.up * upwardForce
+            );
+
+            StartCoroutine(FadeAndDestroy(upperHalf));
+            StartCoroutine(FadeAndDestroy(lowerHalf));
+        }
+    }
+
+    private struct SliceSource
+    {
+        public Mesh mesh;
+        public Material[] materials;
+        public Matrix4x4 worldToLocal;
+        public Vector3 worldPosition;
+        public Quaternion worldRotation;
+        public Vector3 worldScale;
+    }
+
+    private List<SliceSource> CollectSliceSources(GameObject target)
+    {
+        List<SliceSource> sources = new List<SliceSource>(4);
+
+        // SkinnedMeshRenderer 우선 탐색
+        SkinnedMeshRenderer[] skinnedRenderers = target.GetComponentsInChildren<SkinnedMeshRenderer>();
+        foreach (SkinnedMeshRenderer skinnedRenderer in skinnedRenderers)
+        {
+            Mesh bakedMesh = new Mesh();
+            skinnedRenderer.BakeMesh(bakedMesh);
+
+            sources.Add(new SliceSource
+            {
+                mesh = bakedMesh,
+                materials = skinnedRenderer.sharedMaterials,
+                worldToLocal = skinnedRenderer.transform.worldToLocalMatrix,
+                worldPosition = skinnedRenderer.transform.position,
+                worldRotation = skinnedRenderer.transform.rotation,
+                worldScale = skinnedRenderer.transform.lossyScale
+            });
+        }
+
+        // MeshFilter 탐색 (SkinnedMesh가 없는 파트)
+        MeshFilter[] meshFilters = target.GetComponentsInChildren<MeshFilter>();
+        foreach (MeshFilter meshFilter in meshFilters)
+        {
+            if (meshFilter.sharedMesh == null) continue;
+
+            MeshRenderer meshRenderer = meshFilter.GetComponent<MeshRenderer>();
+            if (meshRenderer == null) continue;
+
+            sources.Add(new SliceSource
+            {
+                mesh = meshFilter.sharedMesh,
+                materials = meshRenderer.sharedMaterials,
+                worldToLocal = meshFilter.transform.worldToLocalMatrix,
+                worldPosition = meshFilter.transform.position,
+                worldRotation = meshFilter.transform.rotation,
+                worldScale = meshFilter.transform.lossyScale
+            });
+        }
+
+        return sources;
+    }
+
+    private GameObject CreateSliceHalf(
+        string halfName, Mesh mesh,
+        Vector3 position, Quaternion rotation, Vector3 scale,
+        Material[] originalMaterials, Material capMaterial,
+        Vector3 force)
+    {
+        GameObject half = new GameObject(halfName);
+        half.transform.position = position;
+        half.transform.rotation = rotation;
+        half.transform.localScale = scale;
+
+        MeshFilter meshFilter = half.AddComponent<MeshFilter>();
+        meshFilter.mesh = mesh;
+
+        MeshRenderer meshRenderer = half.AddComponent<MeshRenderer>();
+
+        // submesh 0 = 원본 머티리얼, submesh 1 = 단면 캡
+        Material[] sliceMaterials = new Material[2];
+        sliceMaterials[0] = (originalMaterials != null && originalMaterials.Length > 0)
+            ? originalMaterials[0]
+            : capMaterial;
+        sliceMaterials[1] = capMaterial;
+        meshRenderer.materials = sliceMaterials;
+
+        // 메시 바운드 기반 콜라이더
+        MeshCollider meshCollider = half.AddComponent<MeshCollider>();
+        meshCollider.convex = true;
+        meshCollider.sharedMesh = mesh;
+
+        Rigidbody rigidbody = half.AddComponent<Rigidbody>();
+        rigidbody.mass = 1f;
+        rigidbody.AddForce(force, ForceMode.Impulse);
+        rigidbody.AddTorque(Random.insideUnitSphere * torqueForce, ForceMode.Impulse);
+
+        return half;
+    }
+
+    private IEnumerator FadeAndDestroy(GameObject half)
+    {
+        if (half == null) yield break;
+
+        MeshRenderer meshRenderer = half.GetComponent<MeshRenderer>();
+
+        // fadeStartTime까지 대기
+        yield return new WaitForSeconds(fadeStartTime);
+
+        if (half == null) yield break;
+
+        // 머티리얼 인스턴스 생성 (fade를 위해)
+        Material[] instanceMaterials = meshRenderer.materials;
+        EnableTransparency(instanceMaterials);
+
+        float fadeDuration = destroyDelay - fadeStartTime;
+        float elapsed = 0f;
+
+        while (elapsed < fadeDuration)
+        {
+            if (half == null) yield break;
+            elapsed += Time.deltaTime;
+            float alpha = Mathf.Lerp(1f, 0f, elapsed / fadeDuration);
+
+            foreach (Material material in instanceMaterials)
+            {
+                Color color = material.GetColor(BaseColorId);
+                color.a = alpha;
+                material.SetColor(BaseColorId, color);
+            }
+
+            yield return null;
+        }
+
+        if (half != null)
+        {
+            // 인스턴스 머티리얼 정리
+            foreach (Material material in instanceMaterials)
+            {
+                Destroy(material);
+            }
+            Destroy(half);
+        }
+    }
+
+    private void EnableTransparency(Material[] materials)
+    {
+        foreach (Material material in materials)
+        {
+            material.SetFloat("_Surface", 1f);
+            material.SetFloat("_Blend", 0f);
+            material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            material.SetInt("_ZWrite", 0);
+            material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+            material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+        }
+    }
+
+    private Material GetCrossSectionMaterial()
+    {
+        if (crossSectionMaterial != null) return crossSectionMaterial;
+
+        // 기본 단면 머티리얼 생성 (어두운 빨간색)
+        Shader shader = unlitShader != null ? unlitShader : Shader.Find("Universal Render Pipeline/Unlit");
+        Material material = new Material(shader);
+        material.SetColor(BaseColorId, new Color(0.4f, 0.05f, 0.05f, 1f));
+        return material;
+    }
+}
