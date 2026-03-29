@@ -137,6 +137,7 @@ public class ExecutionSliceEffect : MonoBehaviour
         Vector3 force)
     {
         GameObject half = new GameObject(halfName);
+        half.layer = LayerMask.NameToLayer("SlicedMesh");
         half.transform.position = position;
         half.transform.rotation = rotation;
         half.transform.localScale = scale;
@@ -154,10 +155,9 @@ public class ExecutionSliceEffect : MonoBehaviour
         sliceMaterials[1] = capMaterial;
         meshRenderer.materials = sliceMaterials;
 
-        // 메시 바운드 기반 콜라이더
-        MeshCollider meshCollider = half.AddComponent<MeshCollider>();
-        meshCollider.convex = true;
-        meshCollider.sharedMesh = mesh;
+        BoxCollider boxCollider = half.AddComponent<BoxCollider>();
+        boxCollider.center = mesh.bounds.center;
+        boxCollider.size = mesh.bounds.size;
 
         Rigidbody rigidbody = half.AddComponent<Rigidbody>();
         rigidbody.mass = 1f;
