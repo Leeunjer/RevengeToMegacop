@@ -7,6 +7,11 @@ public class DashAfterimageEffect : MonoBehaviour
     [SerializeField] private float spawnInterval = 0.05f;
     [SerializeField] private float fadeDuration = 0.3f;
     [SerializeField] private Color afterimageColor = new Color(1f, 1f, 1f, 0.5f);
+
+    [Header("Execution Dash")]
+    [SerializeField] private float executionSpawnInterval = 0.02f;
+    [SerializeField] private Color executionAfterimageColor = new Color(1f, 0.2f, 0.1f, 0.7f);
+
     [SerializeField] private Shader unlitShader;
 
     private PlayerMovementController movementController;
@@ -28,6 +33,7 @@ public class DashAfterimageEffect : MonoBehaviour
     {
         public int poolIndex;
         public float elapsed;
+        public Color startColor;
     }
 
     // Shader.PropertyToID로 캐싱하면 매 프레임 문자열 해시 연산을 피할 수 있다.
@@ -60,8 +66,9 @@ public class DashAfterimageEffect : MonoBehaviour
 
     private void InitPool()
     {
-        // 동시에 살아있을 수 있는 최대 잔상 수 = ceil(fadeDuration / spawnInterval) * meshEntries.Length
-        int maxConcurrentSpawns = Mathf.CeilToInt(fadeDuration / spawnInterval) + 1;
+        // 동시에 살아있을 수 있는 최대 잔상 수: 일반/처형 대시 중 더 빠른 간격 기준으로 풀 크기 결정
+        float minInterval = Mathf.Min(spawnInterval, executionSpawnInterval);
+        int maxConcurrentSpawns = Mathf.CeilToInt(fadeDuration / minInterval) + 1;
         int poolSize = maxConcurrentSpawns * meshEntries.Length;
 
         if (unlitShader == null)
@@ -75,9 +82,12 @@ public class DashAfterimageEffect : MonoBehaviour
         freeIndices = new Queue<int>(poolSize);
         activeItems = new List<ActiveItem>(poolSize);
 
+        GameObject container = new GameObject("AfterimagePool");
+
         for (int i = 0; i < poolSize; i++)
         {
             GameObject go = new GameObject("Afterimage");
+            go.transform.SetParent(container.transform, false);
             go.SetActive(false);
 
             MeshFilter mf = go.AddComponent<MeshFilter>();
@@ -121,24 +131,28 @@ public class DashAfterimageEffect : MonoBehaviour
 
     void Update()
     {
-        if (!movementController.IsDashing)
+        bool isDashing = movementController.IsDashing;
+        bool isExecutionDashing = movementController.IsExecutionDashing;
+
+        if (!isDashing && !isExecutionDashing)
         {
             timer = 0f;
         }
         else
         {
+            float interval = isExecutionDashing ? executionSpawnInterval : spawnInterval;
             timer += Time.deltaTime;
-            if (timer >= spawnInterval)
+            if (timer >= interval)
             {
                 timer = 0f;
-                SpawnAfterimage();
+                SpawnAfterimage(isExecutionDashing ? executionAfterimageColor : afterimageColor);
             }
         }
 
         UpdateActiveItems();
     }
 
-    private void SpawnAfterimage()
+    private void SpawnAfterimage(Color color)
     {
         foreach (MeshEntry entry in meshEntries)
         {
@@ -151,10 +165,10 @@ public class DashAfterimageEffect : MonoBehaviour
             item.go.transform.SetPositionAndRotation(entry.transform.position, entry.transform.rotation);
             item.go.transform.localScale = entry.transform.lossyScale;
             item.filter.sharedMesh = entry.filter.sharedMesh;
-            item.material.SetColor(BaseColorId, afterimageColor);
+            item.material.SetColor(BaseColorId, color);
             item.go.SetActive(true);
 
-            activeItems.Add(new ActiveItem { poolIndex = idx, elapsed = 0f });
+            activeItems.Add(new ActiveItem { poolIndex = idx, elapsed = 0f, startColor = color });
         }
     }
 
@@ -173,9 +187,9 @@ public class DashAfterimageEffect : MonoBehaviour
                 continue;
             }
 
-            float alpha = Mathf.Lerp(afterimageColor.a, 0f, active.elapsed / fadeDuration);
+            float alpha = Mathf.Lerp(active.startColor.a, 0f, active.elapsed / fadeDuration);
             pool[active.poolIndex].material.SetColor(BaseColorId,
-                new Color(afterimageColor.r, afterimageColor.g, afterimageColor.b, alpha));
+                new Color(active.startColor.r, active.startColor.g, active.startColor.b, alpha));
 
             activeItems[i] = active;
         }

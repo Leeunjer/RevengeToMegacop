@@ -10,7 +10,6 @@ public class PlayerExecutionController : MonoBehaviour
 
     [SerializeField] private LayerMask enemyLayerMask;
     [SerializeField] private float executionRange = 50f;
-    [SerializeField] private TrailRenderer executionTrail;
     [SerializeField] private ExecutionSliceEffect executionSliceEffect;
 
     private InputAction attackAction;
@@ -54,15 +53,12 @@ public class PlayerExecutionController : MonoBehaviour
 
         executionTarget = enemy.TryGetComponent<Enemy>(out var enemyComponent) ? enemyComponent : null;
 
-        if (executionTrail != null) executionTrail.emitting = true;
         playerMovementController.ExecutionDash(enemyPosition, OnExecutionDashComplete);
         playerStateController.Executed();
     }
 
     private void OnExecutionDashComplete()
     {
-        if (executionTrail != null) executionTrail.emitting = false;
-
         if (executionTarget != null)
         {
             // 슬라이스 방향: 플레이어 진행 방향의 수직 (좌우 절단)
