@@ -11,7 +11,7 @@ public abstract class GunWeapon : Weapon
 {
     [field: SerializeField] public int MaxAmmo { get; private set; }
 
-    [field: SerializeField] public int Ammo { get; private set; }
+    public int Ammo { get; private set; }
 
     [field: SerializeField] public float BulletSpeed { get; private set; }
 
