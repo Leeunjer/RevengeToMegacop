@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 public class PlayerShurikenController : PlayerSkillController
 {
     [SerializeField] private GameObject shurikenPrefab;
-    [SerializeField] private float coolTime = 3f;
+    [SerializeField] private float cooldown = 3f;
 
     private PlayerMovementController controller;
 
@@ -35,7 +35,7 @@ public class PlayerShurikenController : PlayerSkillController
         if (!HasFlyingShuriken() && isShurikenThrown)
         {
             isShurikenThrown = false;
-            currentCooldown = coolTime;
+            currentCooldown = cooldown;
         }
     }
 
@@ -43,7 +43,7 @@ public class PlayerShurikenController : PlayerSkillController
     {
         if (shurikenAction.WasPressedThisFrame())
         {
-            if (InCoolTime()) return;
+            if (InCooldown()) return;
             if (shurikenPrefab == null)
             {
                 Debug.LogWarning("PlayerShurikenController: shurikenPrefab is not assigned.");
@@ -55,7 +55,7 @@ public class PlayerShurikenController : PlayerSkillController
         }
     }
 
-    private bool InCoolTime()
+    private bool InCooldown()
     {
         return 0 < currentCooldown;
     }
@@ -72,7 +72,7 @@ public class PlayerShurikenController : PlayerSkillController
         Destroy(shuriken);
         shuriken = null;
         isShurikenThrown = false;
-        currentCooldown = coolTime;
+        currentCooldown = cooldown;
         controller.Teleport(teleportPos);
     }
 
