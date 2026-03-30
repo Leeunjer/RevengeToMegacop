@@ -40,6 +40,7 @@ public class PlayerExecutionController : MonoBehaviour
 
     private void TryExecute()
     {
+        if (Mouse.current == null) return;
         Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
         if (Physics.Raycast(ray, out RaycastHit hit, executionRange, enemyLayerMask))
         {
