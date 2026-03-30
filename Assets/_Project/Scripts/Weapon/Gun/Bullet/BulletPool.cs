@@ -56,11 +56,11 @@ public class BulletPool : MonoBehaviour
         pool = new ObjectPool<Bullet>(
             createFunc: () =>
             {
-                GameObject go = Instantiate(prefab, transform);
-                if (!go.TryGetComponent<Bullet>(out Bullet bullet))
+                GameObject bulletObject = Instantiate(prefab, transform);
+                if (!bulletObject.TryGetComponent<Bullet>(out Bullet bullet))
                 {
                     Debug.LogError($"BulletPool: prefab '{prefab.name}'에 Bullet 컴포넌트가 없습니다.");
-                    Destroy(go);
+                    Destroy(bulletObject);
                     return null;
                 }
                 bullet.SetPrefab(prefab);

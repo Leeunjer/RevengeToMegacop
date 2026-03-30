@@ -24,7 +24,7 @@ public class DashAfterimageEffect : MonoBehaviour
 
     private struct PoolItem
     {
-        public GameObject go;
+        public GameObject gameObject;
         public MeshFilter filter;
         public Material material;
     }
@@ -86,45 +86,45 @@ public class DashAfterimageEffect : MonoBehaviour
 
         for (int i = 0; i < poolSize; i++)
         {
-            GameObject go = new GameObject("Afterimage");
-            go.transform.SetParent(container.transform, false);
-            go.SetActive(false);
+            GameObject afterimageObject = new GameObject("Afterimage");
+            afterimageObject.transform.SetParent(container.transform, false);
+            afterimageObject.SetActive(false);
 
-            MeshFilter mf = go.AddComponent<MeshFilter>();
-            MeshRenderer mr = go.AddComponent<MeshRenderer>();
+            MeshFilter meshFilter = afterimageObject.AddComponent<MeshFilter>();
+            MeshRenderer meshRenderer = afterimageObject.AddComponent<MeshRenderer>();
 
             // URP에서 런타임으로 투명 머티리얼을 생성할 때는 셰이더 속성을 직접 설정해야 한다.
             // Inspector에서 Surface Type을 Transparent로 바꾸면 Unity가 내부적으로 아래 값들을 자동 설정하지만,
             // 코드로 생성하면 그 과정이 생략되므로 수동으로 동일하게 맞춰야 한다.
-            Material mat = new Material(unlitShader);
+            Material material = new Material(unlitShader);
 
             // Surface Type: 0 = Opaque(불투명), 1 = Transparent(반투명)
-            mat.SetFloat("_Surface", 1f);
+            material.SetFloat("_Surface", 1f);
 
             // Blend Mode: 0 = Alpha, 1 = Premultiply, 2 = Additive, 3 = Multiply
             // Alpha 블렌딩은 픽셀 색상을 알파값에 따라 뒤 오브젝트와 혼합한다.
-            mat.SetFloat("_Blend", 0f);
+            material.SetFloat("_Blend", 0f);
 
             // GPU 블렌딩 공식: 최종색 = (SrcColor × SrcBlend) + (DstColor × DstBlend)
             // SrcAlpha / OneMinusSrcAlpha 조합이 일반적인 알파 블렌딩이다.
-            mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-            mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
 
             // ZWrite: 깊이 버퍼 기록 여부. 투명 오브젝트는 0(끔)으로 설정해야
             // 뒤에 있는 오브젝트가 가려지지 않는다.
-            mat.SetInt("_ZWrite", 0);
+            material.SetInt("_ZWrite", 0);
 
             // URP 셰이더 내부 분기용 키워드. 이 키워드가 없으면 셰이더가
             // Transparent 경로로 컴파일되지 않아 투명도가 적용되지 않는다.
-            mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+            material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
 
             // RenderQueue: 투명 오브젝트는 불투명 오브젝트(2000)보다 나중에 그려야
             // 깊이 정렬이 올바르게 된다. Transparent = 3000.
-            mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+            material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
 
-            mr.material = mat;
+            meshRenderer.material = material;
 
-            pool[i] = new PoolItem { go = go, filter = mf, material = mat };
+            pool[i] = new PoolItem { gameObject = afterimageObject, filter = meshFilter, material = material };
             freeIndices.Enqueue(i);
         }
     }
@@ -162,11 +162,11 @@ public class DashAfterimageEffect : MonoBehaviour
             int idx = freeIndices.Dequeue();
             PoolItem item = pool[idx];
 
-            item.go.transform.SetPositionAndRotation(entry.transform.position, entry.transform.rotation);
-            item.go.transform.localScale = entry.transform.lossyScale;
+            item.gameObject.transform.SetPositionAndRotation(entry.transform.position, entry.transform.rotation);
+            item.gameObject.transform.localScale = entry.transform.lossyScale;
             item.filter.sharedMesh = entry.filter.sharedMesh;
             item.material.SetColor(BaseColorId, color);
-            item.go.SetActive(true);
+            item.gameObject.SetActive(true);
 
             activeItems.Add(new ActiveItem { poolIndex = idx, elapsed = 0f, startColor = color });
         }
@@ -181,7 +181,7 @@ public class DashAfterimageEffect : MonoBehaviour
 
             if (active.elapsed >= fadeDuration)
             {
-                pool[active.poolIndex].go.SetActive(false);
+                pool[active.poolIndex].gameObject.SetActive(false);
                 freeIndices.Enqueue(active.poolIndex);
                 activeItems.RemoveAt(i);
                 continue;
@@ -201,7 +201,7 @@ public class DashAfterimageEffect : MonoBehaviour
         foreach (PoolItem item in pool)
         {
             Destroy(item.material);
-            Destroy(item.go);
+            Destroy(item.gameObject);
         }
     }
 }
