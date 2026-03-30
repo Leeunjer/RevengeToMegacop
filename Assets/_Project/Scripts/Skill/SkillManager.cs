@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 using UnityEngine;
@@ -25,6 +26,8 @@ public class SkillManager : MonoBehaviour
     /// <summary>스킬이 해금될 때 발행된다. 스킬트리 UI 등에서 구독한다.</summary>
     public event Action<SkillId> OnSkillUnlocked;
 
+    private string SaveFilePath => Path.Combine(Application.persistentDataPath, "skills.json");
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -33,11 +36,20 @@ public class SkillManager : MonoBehaviour
             return;
         }
         Instance = this;
+        DontDestroyOnLoad(gameObject);
 
-        foreach (var id in initiallyUnlockedSkills)
+        // 세이브 파일이 있으면 디스크에서 복원, 없으면 초기 해금 목록 적용
+        if (File.Exists(SaveFilePath))
         {
-            if (id != SkillId.None)
-                unlockedSkills.Add(id);
+            LoadFromDisk();
+        }
+        else
+        {
+            foreach (SkillId id in initiallyUnlockedSkills)
+            {
+                if (id != SkillId.None)
+                    unlockedSkills.Add(id);
+            }
         }
     }
 
@@ -70,7 +82,42 @@ public class SkillManager : MonoBehaviour
 
         unlockedSkills.Add(id);
         OnSkillUnlocked?.Invoke(id);
+        SaveToDisk();
         return true;
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
+
+    void OnApplicationQuit()
+    {
+        SaveToDisk();
+    }
+
+    private void SaveToDisk()
+    {
+        string json = JsonUtility.ToJson(ToSaveData());
+        File.WriteAllText(SaveFilePath, json);
+    }
+
+    private void LoadFromDisk()
+    {
+        try
+        {
+            string json = File.ReadAllText(SaveFilePath);
+            LoadSaveData(JsonUtility.FromJson<SkillSaveData>(json));
+        }
+        catch (Exception exception)
+        {
+            Debug.LogWarning($"SkillManager: 세이브 파일 로드 실패, 초기 해금 목록으로 대체합니다. ({exception.Message})");
+            foreach (SkillId id in initiallyUnlockedSkills)
+            {
+                if (id != SkillId.None)
+                    unlockedSkills.Add(id);
+            }
+        }
     }
 
     /// <summary>현재 해금 상태를 세이브 데이터로 변환한다.</summary>
