@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class UIController : MonoBehaviour
 {
-    [SerializeField] private GameObject hp;
-    [SerializeField] private GameObject executionGauge;
-    [SerializeField] private GameObject stamina;
+    [SerializeField] private Transform hp;
+    [SerializeField] private Transform executionGauge;
+    [SerializeField] private Transform stamina;
     [SerializeField] private PlayerStateController playerStateController;
 
     void Start()
@@ -34,16 +34,16 @@ public class UIController : MonoBehaviour
 
     private void UpdateHp(float ratio)
     {
-        hp.transform.localScale = new Vector3(ratio, 1, 1);
+        hp.localScale = new Vector3(ratio, 1, 1);
     }
 
     private void UpdateExecutionGauge(float ratio)
     {
-        executionGauge.transform.localScale = new Vector3(ratio, 1, 1);
+        executionGauge.localScale = new Vector3(ratio, 1, 1);
     }
 
     private void UpdateStamina(float ratio)
     {
-        stamina.transform.localScale = new Vector3(ratio, 1, 1);
+        stamina.localScale = new Vector3(ratio, 1, 1);
     }
 }
