@@ -26,6 +26,8 @@ public class ExecutionSliceEffect : MonoBehaviour
 
     private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
 
+    private Material fallbackCrossSectionMaterial;
+
     /// <summary>
     /// 대상 오브젝트를 슬라이스한다. sliceNormal은 월드 좌표 기준 절단 방향.
     /// 호출 후 원본 오브젝트는 비활성화된다 (파괴는 호출자가 관리).
@@ -49,6 +51,7 @@ public class ExecutionSliceEffect : MonoBehaviour
             Plane localPlane = new Plane(localNormal, localPosition);
 
             MeshSlicer.SlicedMesh slicedMesh = MeshSlicer.Slice(source.mesh, localPlane);
+            if (source.isBakedMesh) Destroy(source.mesh);
             if (slicedMesh == null) continue;
 
             Material[] originalMaterials = source.materials;
@@ -78,6 +81,7 @@ public class ExecutionSliceEffect : MonoBehaviour
     private struct SliceSource
     {
         public Mesh mesh;
+        public bool isBakedMesh;
         public Material[] materials;
         public Matrix4x4 worldToLocal;
         public Vector3 worldPosition;
@@ -99,6 +103,7 @@ public class ExecutionSliceEffect : MonoBehaviour
             sources.Add(new SliceSource
             {
                 mesh = bakedMesh,
+                isBakedMesh = true,
                 materials = skinnedRenderer.sharedMaterials,
                 worldToLocal = skinnedRenderer.transform.worldToLocalMatrix,
                 worldPosition = skinnedRenderer.transform.position,
@@ -230,10 +235,17 @@ public class ExecutionSliceEffect : MonoBehaviour
     {
         if (crossSectionMaterial != null) return crossSectionMaterial;
 
-        // 기본 단면 머티리얼 생성 (어두운 빨간색)
+        if (fallbackCrossSectionMaterial != null) return fallbackCrossSectionMaterial;
+
+        // 기본 단면 머티리얼 생성 (어두운 빨간색) — 최초 1회만 생성
         Shader shader = unlitShader != null ? unlitShader : Shader.Find("Universal Render Pipeline/Unlit");
-        Material material = new Material(shader);
-        material.SetColor(BaseColorId, new Color(0.4f, 0.05f, 0.05f, 1f));
-        return material;
+        fallbackCrossSectionMaterial = new Material(shader);
+        fallbackCrossSectionMaterial.SetColor(BaseColorId, new Color(0.4f, 0.05f, 0.05f, 1f));
+        return fallbackCrossSectionMaterial;
+    }
+
+    void OnDestroy()
+    {
+        if (fallbackCrossSectionMaterial != null) Destroy(fallbackCrossSectionMaterial);
     }
 }
