@@ -237,9 +237,14 @@ public class ExecutionSliceEffect : MonoBehaviour
 
         if (fallbackCrossSectionMaterial != null) return fallbackCrossSectionMaterial;
 
+        if (unlitShader == null)
+        {
+            Debug.LogWarning("ExecutionSliceEffect: unlitShader가 지정되지 않았습니다. Inspector에서 URP Unlit 셰이더를 할당해 주세요.");
+            return null;
+        }
+
         // 기본 단면 머티리얼 생성 (어두운 빨간색) — 최초 1회만 생성
-        Shader shader = unlitShader != null ? unlitShader : Shader.Find("Universal Render Pipeline/Unlit");
-        fallbackCrossSectionMaterial = new Material(shader);
+        fallbackCrossSectionMaterial = new Material(unlitShader);
         fallbackCrossSectionMaterial.SetColor(BaseColorId, new Color(0.4f, 0.05f, 0.05f, 1f));
         return fallbackCrossSectionMaterial;
     }
