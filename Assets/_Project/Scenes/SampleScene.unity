@@ -685,9 +685,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e957b58d3ab5dcb4a9b6a72b7f2e3021, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp: {fileID: 649008876}
-  executionGauge: {fileID: 1681223241}
-  stamina: {fileID: 761408521}
+  hp: {fileID: 649008879}
+  executionGauge: {fileID: 1681223244}
+  stamina: {fileID: 761408524}
   playerStateController: {fileID: 1700423676}
 --- !u!114 &780219873
 MonoBehaviour:
@@ -1251,7 +1251,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shurikenPrefab: {fileID: 9198560586046724312, guid: 1f1c9d2ad4c559349b7a6bba83e6aeff, type: 3}
-  coolTime: 3
+  cooldown: 3
 --- !u!114 &1700423675
 MonoBehaviour:
   m_ObjectHideFlags: 0
