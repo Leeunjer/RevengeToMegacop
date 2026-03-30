@@ -64,6 +64,7 @@ public class PlayerStateController : MonoBehaviour
     {
         if (hp <= 0) hp = maxHp;
         if (stamina <= 0) stamina = maxStamina;
+        currentStaminaRecoveryTime = staminaRecoveryTimeStep;
     }
 
     public void TakeDamage(float damage)
