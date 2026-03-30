@@ -11,7 +11,7 @@ public class PlayerStateController : MonoBehaviour
         private set
         {
             hp = Mathf.Clamp(value, 0, maxHp);
-            OnHpChanged?.Invoke(MaxHp > 0f ? Hp / MaxHp : 0f);
+            OnHpChanged?.Invoke(HpRatio);
         }
     }
     [SerializeField] private float maxHp = 100f;
@@ -23,7 +23,7 @@ public class PlayerStateController : MonoBehaviour
         private set
         {
             executionGauge = Mathf.Clamp(value, 0, maxExecutionGauge);
-            OnExecutionGaugeChanged?.Invoke(MaxExecutionGauge > 0f ? ExecutionGauge / MaxExecutionGauge : 0f);
+            OnExecutionGaugeChanged?.Invoke(ExecutionGaugeRatio);
         }
     }
     [SerializeField] private float maxExecutionGauge = 100f;
@@ -38,7 +38,7 @@ public class PlayerStateController : MonoBehaviour
         private set
         {
             stamina = Mathf.Clamp(value, 0, maxStamina);
-            OnStaminaChanged?.Invoke(MaxStamina > 0f ? Stamina / MaxStamina : 0f);
+            OnStaminaChanged?.Invoke(StaminaRatio);
         }
     }
     [SerializeField] private float maxStamina = 100f;
@@ -50,6 +50,10 @@ public class PlayerStateController : MonoBehaviour
 
     [SerializeField] private float staminaRecoveryTimeStep = 0.5f;
     private float currentStaminaRecoveryTime;
+
+    public float HpRatio => MaxHp > 0f ? Hp / MaxHp : 0f;
+    public float ExecutionGaugeRatio => MaxExecutionGauge > 0f ? ExecutionGauge / MaxExecutionGauge : 0f;
+    public float StaminaRatio => MaxStamina > 0f ? Stamina / MaxStamina : 0f;
 
     public event Action<float> OnHpChanged;
     public event Action<float> OnExecutionGaugeChanged;
@@ -125,9 +129,9 @@ public class PlayerStateController : MonoBehaviour
 
     private void NotifyUI()
     {
-        OnHpChanged?.Invoke(MaxHp > 0f ? Hp / MaxHp : 0f);
-        OnExecutionGaugeChanged?.Invoke(MaxExecutionGauge > 0f ? ExecutionGauge / MaxExecutionGauge : 0f);
-        OnStaminaChanged?.Invoke(MaxStamina > 0f ? Stamina / MaxStamina : 0f);
+        OnHpChanged?.Invoke(HpRatio);
+        OnExecutionGaugeChanged?.Invoke(ExecutionGaugeRatio);
+        OnStaminaChanged?.Invoke(StaminaRatio);
     }
 
     void OnValidate()

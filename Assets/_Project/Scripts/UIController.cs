@@ -17,9 +17,9 @@ public class UIController : MonoBehaviour
         playerStateController.OnHpChanged += UpdateHp;
         playerStateController.OnExecutionGaugeChanged += UpdateExecutionGauge;
         playerStateController.OnStaminaChanged += UpdateStamina;
-        UpdateHp(playerStateController.MaxHp > 0f ? playerStateController.Hp / playerStateController.MaxHp : 0f);
-        UpdateExecutionGauge(playerStateController.MaxExecutionGauge > 0f ? playerStateController.ExecutionGauge / playerStateController.MaxExecutionGauge : 0f);
-        UpdateStamina(playerStateController.MaxStamina > 0f ? playerStateController.Stamina / playerStateController.MaxStamina : 0f);
+        UpdateHp(playerStateController.HpRatio);
+        UpdateExecutionGauge(playerStateController.ExecutionGaugeRatio);
+        UpdateStamina(playerStateController.StaminaRatio);
     }
 
     void OnDestroy()
