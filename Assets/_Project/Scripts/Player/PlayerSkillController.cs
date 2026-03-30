@@ -1,3 +1,4 @@
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>
@@ -7,7 +8,7 @@ using UnityEngine.InputSystem;
 /// [선택 override] Tick — 매 프레임 (쿨타임 등 해금 여부 무관한 업데이트)
 /// [선택 override] Handle — 스킬 해금 시에만 호출 (입력 처리 등 핵심 로직)
 /// </summary>
-public abstract class PlayerSkillController : UnityEngine.MonoBehaviour
+public abstract class PlayerSkillController : MonoBehaviour
 {
     /// <summary>이 컨트롤러가 담당하는 스킬의 식별자.</summary>
     public abstract SkillId SkillId { get; }
