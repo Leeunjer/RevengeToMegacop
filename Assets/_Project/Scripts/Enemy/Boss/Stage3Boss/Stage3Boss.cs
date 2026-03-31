@@ -1,20 +1,32 @@
 using UnityEngine;
 
-public class Stage3Boss : BossEnemy
+namespace Boss3
 {
-    private FireAtRandom _fireAtRandomPattern;
-    private ScopePattern _scopePattern;
-    private SmokeBomb _SmokeBombPattern;
+    public class Stage3Boss : BossEnemy
+{
+    [SerializeField] private FireAtRandom _fireAtRandomPattern;
     
+    [SerializeField] private SmokeBomb _smokeBombPattern;
+    [SerializeField] private OscillatingBulletPattern _OscillatingBulletPattern;
+    
+    
+
     protected override BossPattern[] GetPatternsForPhase(int phaseIndex)
     {
-        if (phaseIndex == 1)
+        if (phaseIndex == 0)
         {
             return new BossPattern[] 
             {
-                _fireAtRandomPattern,
-                _scopePattern,
-                _SmokeBombPattern
+                _OscillatingBulletPattern,
+                _smokeBombPattern
+                
+            };
+        }
+        if (phaseIndex == 1)
+        {
+            return new BossPattern[]
+            {
+                _fireAtRandomPattern
             };
         }
 
@@ -23,6 +35,7 @@ public class Stage3Boss : BossEnemy
 
     protected override void OnPhaseChanged(int phaseIndex, BossPhaseData data)
     {
-        throw new System.NotImplementedException();
+        
     }
+}
 }

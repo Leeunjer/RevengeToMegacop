@@ -11,7 +11,10 @@ public class ScopePattern : BossPattern
 
     IEnumerator SpwanScope(BossEnemy boss, Action onComplete)
     {
+        Debug.Log("scopePattern");
         //TODO : 플레이어를 천천히 따라가는 스코프를 생성
         yield return null;
+        onComplete?.Invoke();
+
     }
 }
