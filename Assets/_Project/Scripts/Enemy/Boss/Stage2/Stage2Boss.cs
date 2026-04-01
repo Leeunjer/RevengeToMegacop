@@ -13,6 +13,9 @@ public class Stage2Boss : BossEnemy
     [Header("Stage2 Boss Settings")]
     [SerializeField] private float maxDamagePerHitRatio = 0.15f;
 
+    [Header("Arrow Rain (Background Hazard)")]
+    [SerializeField] private ArrowRainPattern arrowRainPattern;
+
     [Header("Phase1 Patterns")]
     [SerializeField] private BossPattern[] phase1Patterns;
 
@@ -76,11 +79,24 @@ public class Stage2Boss : BossEnemy
     protected override IEnumerator OnBossIntro()
     {
         // TODO: 등장 연출
+
+        // 보스전 시작 시 화살비 가동
+        if (arrowRainPattern != null)
+        {
+            arrowRainPattern.StartRain(Target, gameObject);
+        }
+
         yield break;
     }
 
     protected override IEnumerator OnBossDeath()
     {
+        // 사망 시 화살비 중단
+        if (arrowRainPattern != null)
+        {
+            arrowRainPattern.StopRain();
+        }
+
         // TODO: 사망 연출
         yield break;
     }
