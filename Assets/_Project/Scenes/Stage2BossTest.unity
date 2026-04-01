@@ -129,7 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 201820290}
   - component: {fileID: 201820289}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BossActivator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -174,7 +174,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 268899214}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: CommonSkill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -207,7 +207,7 @@ GameObject:
   m_Component:
   - component: {fileID: 301999376}
   - component: {fileID: 301999377}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: GuidedArrowPattern
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -256,7 +256,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 314148342}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: WeaponPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -563,7 +563,7 @@ GameObject:
   m_Component:
   - component: {fileID: 447062198}
   - component: {fileID: 447062199}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ArrowRainPattern
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -617,7 +617,7 @@ GameObject:
   m_Component:
   - component: {fileID: 450960402}
   - component: {fileID: 450960403}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: CloneSummonPattern
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1100,7 +1100,7 @@ GameObject:
   m_Component:
   - component: {fileID: 904950012}
   - component: {fileID: 904950011}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: AimedShotPattern
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1156,7 +1156,7 @@ GameObject:
   - component: {fileID: 931758842}
   - component: {fileID: 931758846}
   - component: {fileID: 931758847}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Stage2Boss
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -1273,7 +1273,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponPoint: {fileID: 314148342}
   turnSpeed: 10
-  maxHp: 100
+  maxHp: 200
   moveSpeed: 3
   useNavMesh: 1
   phases:
@@ -1289,6 +1289,7 @@ MonoBehaviour:
   - {fileID: 1053918992}
   - {fileID: 301999377}
   - {fileID: 450960403}
+  - {fileID: 1180897391}
 --- !u!54 &931758847
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1325,7 +1326,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 944183187}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Phase2Skill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1446,7 +1447,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1053918993}
   - component: {fileID: 1053918992}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: AcceleratingRhythmShotPattern
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1497,7 +1498,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1180897392}
   - component: {fileID: 1180897391}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: TeleportPattern
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2030,7 +2031,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1774342352}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Phase1Skill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2065,7 +2066,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1789487667}
   - component: {fileID: 1789487666}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RhythmShotPattern
   m_TagString: Untagged
   m_Icon: {fileID: 0}
