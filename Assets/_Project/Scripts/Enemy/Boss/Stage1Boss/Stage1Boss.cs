@@ -71,7 +71,9 @@ public class Stage1Boss : BossEnemy
             return;
 
         base.Hit(bullet);
-        bullet.Remove();
+
+        if (bullet is not Stage1BossBomb bomb)
+            bullet.Remove();
         Debug.Log($"Boss hit! Remaining HP: {Hp}");
     }
 

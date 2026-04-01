@@ -1531,12 +1531,24 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 171627873018261999, guid: 5b01e53a0e7f6475083b2936e7f6b218, type: 3}
+      propertyPath: bulletSpeed
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 171627873018261999, guid: 5b01e53a0e7f6475083b2936e7f6b218, type: 3}
       propertyPath: maxHoldDuration
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 171627873018261999, guid: 5b01e53a0e7f6475083b2936e7f6b218, type: 3}
+      propertyPath: maxShotDuration
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 171627873018261999, guid: 5b01e53a0e7f6475083b2936e7f6b218, type: 3}
       propertyPath: minHoldDuration
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 171627873018261999, guid: 5b01e53a0e7f6475083b2936e7f6b218, type: 3}
+      propertyPath: minShotDuration
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2654975058737273334, guid: 5b01e53a0e7f6475083b2936e7f6b218, type: 3}
       propertyPath: maxShieldGauge
@@ -1596,7 +1608,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4548666451752014564, guid: 5b01e53a0e7f6475083b2936e7f6b218, type: 3}
       propertyPath: weight
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4548666451752014564, guid: 5b01e53a0e7f6475083b2936e7f6b218, type: 3}
       propertyPath: cooldown
