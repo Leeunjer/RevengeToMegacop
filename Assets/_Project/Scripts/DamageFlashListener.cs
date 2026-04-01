@@ -28,5 +28,9 @@ public class DamageFlashListener : MonoBehaviour
         }
     }
 
-    private void OnDamaged() => damageFlash?.Flash(flashIntensity, flashDuration);
+    private void OnDamaged()
+    {
+        if (damageFlash != null)
+            damageFlash.Flash(flashIntensity, flashDuration);
+    }
 }
