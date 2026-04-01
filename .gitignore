@@ -103,3 +103,5 @@ Assets/_Practice/
 .idea/
 .vscode/
 AGENTS.md
+
+.claude/settings.local.json

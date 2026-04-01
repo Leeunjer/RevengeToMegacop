@@ -42,14 +42,14 @@ public class BossUI : MonoBehaviour
         }
     }
 
-    private void OnBossDied(GameObject obj)
+    private void OnBossDied(Enemy enemy)
     {
         Hide();
     }
 
     void OnDestroy()
     {
-        if (boss != null)
+        if (!ReferenceEquals(boss, null))
         {
             boss.OnHpChanged -= UpdateHpBar;
             boss.OnDeath -= OnBossDied;
