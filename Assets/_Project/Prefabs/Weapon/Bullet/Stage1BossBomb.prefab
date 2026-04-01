@@ -122,7 +122,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Damage>k__BackingField: 40
-  bombSpeed: 15
-  arcHeight: 5
+  bombSpeed: 20
+  arcHeight: 10
   fuseTime: 4
   explosionRadius: 3
