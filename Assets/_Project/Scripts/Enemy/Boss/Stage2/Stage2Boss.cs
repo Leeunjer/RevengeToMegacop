@@ -41,6 +41,8 @@ public class Stage2Boss : BossEnemy
         {
             SetHp(minHpAfterHit);
         }
+
+        Debug.Log($"[Stage2Boss] HP: {Hp}/{MaxHp} ({Mathf.RoundToInt(HpRatio * 100)}%)");
     }
 
     /// <summary>
@@ -61,6 +63,18 @@ public class Stage2Boss : BossEnemy
         base.Die();
     }
 
+    /// <summary>
+    /// 유도 화살 명중 시 호출. MaxHp × damageRatio 만큼 HP를 깎는다.
+    /// GuidedArrowBullet에서 사용. SetHp()가 protected이므로 이 메서드로 중개한다.
+    /// </summary>
+    public void TakeGuidedArrowDamage(float damageRatio)
+    {
+        float damage = MaxHp * damageRatio;
+        float newHp = Hp - damage;
+        if (newHp < 0f) newHp = 0f;
+        SetHp(newHp);
+    }
+
     protected override BossPattern[] GetPatternsForPhase(int phaseIndex)
     {
         return phaseIndex switch
@@ -73,7 +87,17 @@ public class Stage2Boss : BossEnemy
 
     protected override void OnPhaseChanged(int phaseIndex, BossPhaseData data)
     {
-        // TODO: 페이즈 전환 연출 (무적 + 애니메이션)
+        // Phase2 진입 시 색상 변경 (임시 시각 피드백)
+        if (phaseIndex == 1)
+        {
+            Renderer renderer = GetComponentInChildren<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material.color = Color.red;
+            }
+
+            Debug.Log("[Stage2Boss] Phase2 진입");
+        }
     }
 
     protected override IEnumerator OnBossIntro()
@@ -95,6 +119,16 @@ public class Stage2Boss : BossEnemy
         if (arrowRainPattern != null)
         {
             arrowRainPattern.StopRain();
+        }
+
+        // 사망 시 모든 분신 제거
+        BossClone[] clones = FindObjectsByType<BossClone>(FindObjectsSortMode.None);
+        for (int i = 0; i < clones.Length; i++)
+        {
+            if (clones[i] != null)
+            {
+                Destroy(clones[i].gameObject);
+            }
         }
 
         // TODO: 사망 연출

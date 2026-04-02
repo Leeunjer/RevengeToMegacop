@@ -245,7 +245,7 @@ MonoBehaviour:
   weight: 1
   guidedArrowPrefab: {fileID: 3370167828950650170, guid: 37de9c3600b164ec4a5202ed1796389b, type: 3}
   arrowSpeed: 6
-  guidedDuration: 4
+  guidedDuration: 1000
   turnSpeed: 2
   afterDelay: 1.5
 --- !u!1 &314148341
@@ -657,11 +657,11 @@ MonoBehaviour:
   minClones: 1
   maxClones: 3
   spawnRadius: 8
-  cloneLifetime: 5
+  cloneLifetime: 1000
+  spawnInterval: 0.5
   afterDelay: 2
   bulletPrefab: {fileID: 3370167828950650170, guid: 1a5bca38494e74aee9fdf6d7afeab1a4, type: 3}
   bulletSpeed: 18
-  attackDelay: 1
 --- !u!1 &542561540
 GameObject:
   m_ObjectHideFlags: 0
@@ -1523,13 +1523,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cooldown: 2
   weight: 1
-  triggerDistance: 5
   teleportDelay: 0.3
   afterDelay: 1
-  mapMinX: -20
-  mapMaxX: 20
-  mapMinZ: -20
-  mapMaxZ: 20
+  minDistance: 5
+  maxDistance: 12
 --- !u!4 &1180897392
 Transform:
   m_ObjectHideFlags: 0
