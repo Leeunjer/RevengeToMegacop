@@ -46,21 +46,27 @@ public class Stage2Boss : BossEnemy
     }
 
     /// <summary>
-    /// 처형 시 즉사 대신 최대 HP의 15% 데미지를 준다.
-    /// HP가 0 이하일 때만 진짜 사망 처리한다.
+    /// 처형 시 즉사 대신 최대 HP의 15% 데미지를 준다. 슬라이스 없이 슬래시 VFX만 재생한다.
+    /// HP가 0 이하가 되면 base.Die()로 진짜 사망 처리한다.
     /// </summary>
-    public override void Die()
+    public override ExecutionResult HandleExecution(ExecutionContext context)
     {
-        if (Hp > 0f)
-        {
-            float damage = MaxHp * maxDamagePerHitRatio;
-            float newHp = Hp - damage;
-            if (newHp < 0f) newHp = 0f;
-            SetHp(newHp);
-            return;
-        }
+        if (context.SlashVfx != null)
+            context.SlashVfx.Play(context.SlicePosition, context.SlashDirection);
 
-        base.Die();
+        float damage = MaxHp * maxDamagePerHitRatio;
+        float newHp = Hp - damage;
+        if (newHp < 0f) newHp = 0f;
+        SetHp(newHp);
+
+        if (newHp <= 0f)
+            base.Die();
+
+        return new ExecutionResult
+        {
+            Target = this,
+            Position = context.SlicePosition
+        };
     }
 
     /// <summary>
