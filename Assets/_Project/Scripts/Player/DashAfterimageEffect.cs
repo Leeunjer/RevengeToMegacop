@@ -19,6 +19,7 @@ public class DashAfterimageEffect : MonoBehaviour
     private struct MeshEntry
     {
         public MeshFilter filter;
+        public SkinnedMeshRenderer skinned;
         public Transform transform;
     }
 
@@ -26,6 +27,7 @@ public class DashAfterimageEffect : MonoBehaviour
     {
         public GameObject gameObject;
         public MeshFilter filter;
+        public Mesh bakedMesh;
         public Material material;
     }
 
@@ -42,6 +44,7 @@ public class DashAfterimageEffect : MonoBehaviour
     private MeshEntry[] meshEntries;
     private float timer;
 
+    private GameObject poolContainer;
     private PoolItem[] pool;
     private Queue<int> freeIndices;
     private List<ActiveItem> activeItems;
@@ -51,13 +54,23 @@ public class DashAfterimageEffect : MonoBehaviour
         movementController = GetComponent<PlayerMovementController>();
 
         MeshFilter[] filters = GetComponentsInChildren<MeshFilter>();
-        meshEntries = new MeshEntry[filters.Length];
+        SkinnedMeshRenderer[] skinnedRenderers = GetComponentsInChildren<SkinnedMeshRenderer>();
+
+        meshEntries = new MeshEntry[filters.Length + skinnedRenderers.Length];
         for (int i = 0; i < filters.Length; i++)
         {
             meshEntries[i] = new MeshEntry
             {
                 filter = filters[i],
                 transform = filters[i].transform
+            };
+        }
+        for (int i = 0; i < skinnedRenderers.Length; i++)
+        {
+            meshEntries[filters.Length + i] = new MeshEntry
+            {
+                skinned = skinnedRenderers[i],
+                transform = skinnedRenderers[i].transform
             };
         }
 
@@ -82,12 +95,12 @@ public class DashAfterimageEffect : MonoBehaviour
         freeIndices = new Queue<int>(poolSize);
         activeItems = new List<ActiveItem>(poolSize);
 
-        GameObject container = new GameObject("AfterimagePool");
+        poolContainer = new GameObject("AfterimagePool");
 
         for (int i = 0; i < poolSize; i++)
         {
             GameObject afterimageObject = new GameObject("Afterimage");
-            afterimageObject.transform.SetParent(container.transform, false);
+            afterimageObject.transform.SetParent(poolContainer.transform, false);
             afterimageObject.SetActive(false);
 
             MeshFilter meshFilter = afterimageObject.AddComponent<MeshFilter>();
@@ -124,7 +137,7 @@ public class DashAfterimageEffect : MonoBehaviour
 
             meshRenderer.material = material;
 
-            pool[i] = new PoolItem { gameObject = afterimageObject, filter = meshFilter, material = material };
+            pool[i] = new PoolItem { gameObject = afterimageObject, filter = meshFilter, bakedMesh = new Mesh(), material = material };
             freeIndices.Enqueue(i);
         }
     }
@@ -156,15 +169,24 @@ public class DashAfterimageEffect : MonoBehaviour
     {
         foreach (MeshEntry entry in meshEntries)
         {
-            if (entry.filter.sharedMesh == null) continue;
             if (freeIndices.Count == 0) continue;
 
             int idx = freeIndices.Dequeue();
             PoolItem item = pool[idx];
 
+            if (entry.skinned != null)
+            {
+                entry.skinned.BakeMesh(item.bakedMesh);
+                item.filter.sharedMesh = item.bakedMesh;
+            }
+            else
+            {
+                if (entry.filter.sharedMesh == null) { freeIndices.Enqueue(idx); continue; }
+                item.filter.sharedMesh = entry.filter.sharedMesh;
+            }
+
             item.gameObject.transform.SetPositionAndRotation(entry.transform.position, entry.transform.rotation);
-            item.gameObject.transform.localScale = entry.transform.lossyScale;
-            item.filter.sharedMesh = entry.filter.sharedMesh;
+            item.gameObject.transform.localScale = entry.skinned != null ? Vector3.one : entry.transform.lossyScale;
             item.material.SetColor(BaseColorId, color);
             item.gameObject.SetActive(true);
 
@@ -200,8 +222,9 @@ public class DashAfterimageEffect : MonoBehaviour
         if (pool == null) return;
         foreach (PoolItem item in pool)
         {
+            Destroy(item.bakedMesh);
             Destroy(item.material);
-            Destroy(item.gameObject);
         }
+        Destroy(poolContainer);
     }
 }
