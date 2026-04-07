@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MovePattern : BossPattern
@@ -32,8 +31,11 @@ public class MovePattern : BossPattern
 
     public Vector3 NextMovePosition => _nextMovePosition;
 
+    private Animator _anim;
+
     void Awake() {
         _player = FindAnyObjectByType<PlayerController>().transform;
+        _anim = GetComponentInParent<Animator>();
     }
 
     protected override void ExecutePattern(BossEnemy boss, Action onComplete)
@@ -54,6 +56,8 @@ public class MovePattern : BossPattern
 
         if (found)
         {
+            _anim.SetBool("Run" , true);
+
             Vector3 moveTarget = _nextMovePosition;
 
 
@@ -71,6 +75,7 @@ public class MovePattern : BossPattern
         Debug.Log(_nextMovePosition);
 
         
+        _anim.SetBool("Run" , false);
 
 
         yield return StartCoroutine(LoockTarget(boss));

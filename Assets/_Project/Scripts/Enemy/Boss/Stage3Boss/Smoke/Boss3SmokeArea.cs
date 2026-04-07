@@ -1,40 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
+using Boss3;
 using UnityEngine;
 
 public class Boss3SmokeArea : MonoBehaviour
 {
     [Header("SmokeSetting")]
     [SerializeField] ParticleSystem _smokeAreaParticle;
-
     [SerializeField] float _smokeLifeTime = 5f;
 
 
-    [Header("상시 감춰야 하는 레이어")]
-    [Tooltip("Enemy가 연막 안에 들어왔을 때 바뀔 레이어 번호 (예: SmokeHide)")]
-    [SerializeField] private int _hideLayer;
-
-    [Header("Enemy")]
-    [Tooltip("연막 안에 들어가면 가려지는 레이어")]
-    [SerializeField] int _EnemyLayer;
-
-    [Header("연막에 가려지는 레이어")]
-    [Tooltip("플레이어가 연막 안에 들어왔을 때 카메라에서 숨길 레이어들")]
-
-    [SerializeField] LayerMask _beHideLayers;
-
+    [Header("연막효과를 관리하는 컨트롤러 오브젝트")]
+    [Tooltip("플레이어의 카메라와 적의 메터리얼을 관리하는 오브젝트")]
+    [SerializeField] ViewController _viewController;
     
     
-    private Camera _mainCamera;
+    
 
     private List<GameObject> _hiddenEnemys = new List<GameObject>();
+    private bool _isPlayerInside = false;
 
 
     void Awake()
     {
-        _mainCamera = Camera.main;
-        if(_mainCamera != null)
-        _mainCamera.cullingMask &= ~(1<<_hideLayer);
+        _viewController = FindFirstObjectByType<ViewController>();
         
     }
     
@@ -62,13 +51,15 @@ public class Boss3SmokeArea : MonoBehaviour
             if (!_hiddenEnemys.Contains(enemyRoot))
             {
                 _hiddenEnemys.Add(enemyRoot);
-                SetTargetLayer(enemyRoot, _hideLayer);
+                _viewController.HideEnemy(true,enemyRoot);
             }
             
         }
         if (other.CompareTag("Player"))
         {
-            MainCameraLayerSet(_beHideLayers,false);
+            if(_isPlayerInside) return;
+            _isPlayerInside = true;
+            _viewController.LimitPlayerView(true);
             
         }
     }
@@ -76,7 +67,9 @@ public class Boss3SmokeArea : MonoBehaviour
         
         if (other.CompareTag("Player"))
         {
-            MainCameraLayerSet(_beHideLayers,true);
+            if(!_isPlayerInside) return;
+            _isPlayerInside = false;
+            _viewController.LimitPlayerView(false);
         }
 
         if (other.CompareTag("Enemy"))
@@ -85,7 +78,8 @@ public class Boss3SmokeArea : MonoBehaviour
 
             if (_hiddenEnemys.Contains(enemyRoot))
             {
-                SetTargetLayer(enemyRoot, _EnemyLayer);
+                
+                _viewController.HideEnemy(false,enemyRoot);
                 _hiddenEnemys.Remove(enemyRoot);
             }
         }
@@ -102,41 +96,20 @@ public class Boss3SmokeArea : MonoBehaviour
         foreach(GameObject enemy in _hiddenEnemys)
         {
             if(enemy == null) continue;
-            SetTargetLayer(enemy, _EnemyLayer); 
+            _viewController.HideEnemy(false,enemy); 
         }
         _hiddenEnemys.Clear();
 
-        MainCameraLayerSet(_beHideLayers,true);
+        if (_isPlayerInside)
+        {
+            _viewController.LimitPlayerView(false);
+            _isPlayerInside = false;
+        }
 
         yield return null;
         Destroy(gameObject);
     }
 
 
-    private void SetTargetLayer(GameObject target, LayerMask currentLayer)
-    {
-        target.layer = currentLayer;
-
-        foreach(Transform child in target.transform)
-        {
-            SetTargetLayer(child.gameObject,currentLayer);
-        }
-    }
-
-    private void MainCameraLayerSet(LayerMask layers , bool isactiveLayers)
-    {
-        if(_mainCamera ==null)return;
-
-        
-            if(isactiveLayers == true)
-            {
-                _mainCamera.cullingMask |= layers.value;
-            }else
-            {
-                _mainCamera.cullingMask &= ~layers.value;
-            }
-        
-        
-
-    }
+    
 }

@@ -9,7 +9,11 @@ namespace Boss3
     [SerializeField] private ScopePattern _scopePattern;
     [SerializeField] private SmokeBomb _smokeBombPattern;
     [SerializeField] private OscillatingBulletPattern _OscillatingBulletPattern;
+    [SerializeField] private OscillatingBulletPattern _StrongOscillatingBulletPattern;
+
     [SerializeField] private MovePattern _movePattern;
+
+    [SerializeField] private SmokeTeleportPattern _smokeTeleportPattern;
 
         
 
@@ -19,22 +23,21 @@ namespace Boss3
         {
             return new BossPattern[] 
             {
-                
+               
                 _OscillatingBulletPattern,
                 _movePattern,
                 _scopePattern,
                 _smokeBombPattern
-                
             };
         }
         if (phaseIndex == 1)
         {
             return new BossPattern[]
             {
-                _OscillatingBulletPattern,
-                _smokeBombPattern,
+                _StrongOscillatingBulletPattern,
+                _smokeTeleportPattern,
                 _scopePattern,
-                _movePattern
+                
             };
         }
 
