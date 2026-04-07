@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,19 +13,52 @@ public class Stage1Boss : BossEnemy
     [SerializeField] private Stage1BossShield shield;
     [SerializeField] private float attackRange = 10f;
     [SerializeField] private float bossMoveSpeed = 3f;
+    [SerializeField] private Animator bossAnimator;
 
     private NavMeshAgent bossAgent;
     private bool isPatternExecuting;
+    private Action pendingFireCallback;
+    private Action pendingAnimationCompleteCallback;
+
+    public Animator BossAnimator => bossAnimator;
 
     public void NotifyPatternStart() => isPatternExecuting = true;
     public void NotifyPatternEnd() => isPatternExecuting = false;
+
+    public void RegisterFireCallback(Action callback) => pendingFireCallback = callback;
+    public void RegisterAnimationCompleteCallback(Action callback) => pendingAnimationCompleteCallback = callback;
+
+    // Animation Event에서 호출 — 발사 시작 신호
+    public void OnFireAnimationEvent()
+    {
+        pendingFireCallback?.Invoke();
+        pendingFireCallback = null;
+    }
+
+    // Animation Event에서 호출 — 애니메이션 완료 신호
+    public void OnAnimationCompleteEvent()
+    {
+        pendingAnimationCompleteCallback?.Invoke();
+        pendingAnimationCompleteCallback = null;
+    }
 
     protected override void Start()
     {
         base.Start();
         bossAgent = GetComponent<NavMeshAgent>();
         if (player != null) ActivateBoss(player);
-        if (shield != null) shield.Initialize(player);
+        if (shield != null)
+        {
+            shield.Initialize(player);
+            shield.OnShieldChanged += OnShieldChanged;
+        }
+        bossAnimator?.SetBool("HasShield", shield != null && shield.gameObject.activeSelf);
+    }
+
+    private void OnShieldChanged(float ratio)
+    {
+        if (ratio <= 0f)
+            bossAnimator?.SetBool("HasShield", false);
     }
 
     protected override void Update()
@@ -71,6 +105,7 @@ public class Stage1Boss : BossEnemy
             return;
 
         base.Hit(bullet);
+        bossAnimator?.SetTrigger("Hit");
 
         if (bullet is not Stage1BossBomb bomb)
             bullet.Remove();
@@ -89,4 +124,10 @@ public class Stage1Boss : BossEnemy
     }
 
     protected override void OnPhaseChanged(int phaseIndex, BossPhaseData data) { }
+
+    protected override System.Collections.IEnumerator OnBossDeath()
+    {
+        bossAnimator?.SetTrigger("Die");
+        yield break;
+    }
 }
