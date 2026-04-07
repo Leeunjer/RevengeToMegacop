@@ -18,7 +18,6 @@ public class DashAfterimageEffect : MonoBehaviour
 
     private struct MeshEntry
     {
-        public MeshFilter filter;
         public SkinnedMeshRenderer skinned;
         public Transform transform;
     }
@@ -53,21 +52,12 @@ public class DashAfterimageEffect : MonoBehaviour
     {
         movementController = GetComponent<PlayerMovementController>();
 
-        MeshFilter[] filters = GetComponentsInChildren<MeshFilter>();
         SkinnedMeshRenderer[] skinnedRenderers = GetComponentsInChildren<SkinnedMeshRenderer>();
 
-        meshEntries = new MeshEntry[filters.Length + skinnedRenderers.Length];
-        for (int i = 0; i < filters.Length; i++)
-        {
-            meshEntries[i] = new MeshEntry
-            {
-                filter = filters[i],
-                transform = filters[i].transform
-            };
-        }
+        meshEntries = new MeshEntry[skinnedRenderers.Length];
         for (int i = 0; i < skinnedRenderers.Length; i++)
         {
-            meshEntries[filters.Length + i] = new MeshEntry
+            meshEntries[i] = new MeshEntry
             {
                 skinned = skinnedRenderers[i],
                 transform = skinnedRenderers[i].transform
@@ -174,19 +164,11 @@ public class DashAfterimageEffect : MonoBehaviour
             int idx = freeIndices.Dequeue();
             PoolItem item = pool[idx];
 
-            if (entry.skinned != null)
-            {
-                entry.skinned.BakeMesh(item.bakedMesh);
-                item.filter.sharedMesh = item.bakedMesh;
-            }
-            else
-            {
-                if (entry.filter.sharedMesh == null) { freeIndices.Enqueue(idx); continue; }
-                item.filter.sharedMesh = entry.filter.sharedMesh;
-            }
+            entry.skinned.BakeMesh(item.bakedMesh);
+            item.filter.sharedMesh = item.bakedMesh;
 
             item.gameObject.transform.SetPositionAndRotation(entry.transform.position, entry.transform.rotation);
-            item.gameObject.transform.localScale = entry.skinned != null ? Vector3.one : entry.transform.lossyScale;
+            item.gameObject.transform.localScale = Vector3.one;
             item.material.SetColor(BaseColorId, color);
             item.gameObject.SetActive(true);
 
