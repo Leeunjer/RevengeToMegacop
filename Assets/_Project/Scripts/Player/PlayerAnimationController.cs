@@ -8,8 +8,6 @@ public class PlayerAnimationController : MonoBehaviour
     private static readonly int IsMovingHash = Animator.StringToHash("IsMoving");
     private static readonly int IsGuardingHash = Animator.StringToHash("IsGuarding");
     private static readonly int IsExecutionDashingHash = Animator.StringToHash("IsExecutionDashing");
-    private static readonly int ParryHash = Animator.StringToHash("Parry");
-    private static readonly int GuardHash = Animator.StringToHash("Guard");
     private static readonly int ThrowSwordHash = Animator.StringToHash("ThrowSword");
     private static readonly int ThrowShurikenHash = Animator.StringToHash("ThrowShuriken");
     private static readonly int HitHash = Animator.StringToHash("Hit");
@@ -31,8 +29,6 @@ public class PlayerAnimationController : MonoBehaviour
 
         animator = GetComponentInChildren<Animator>();
 
-        hitController.OnParry += () => SetTriggerSafe(ParryHash);
-        hitController.OnGuard += () => SetTriggerSafe(GuardHash);
         hitController.OnDamaged += () => SetTriggerSafe(HitHash);
         stateController.OnDeath += () => SetTriggerSafe(DeathHash);
         if (swordController != null)
