@@ -6,7 +6,7 @@
 
 ## 네이밍
 
-- `private` 필드: `camelCase`
+- `private` 필드: `camelCase` — `_` prefix 붙이지 않음 (`_health` ✗ → `health` ✓)
 - public 메서드/타입: `PascalCase`
 - Inspector 노출 필드: `[SerializeField] private` — `public` 필드 금지
 - **변수명 축약 금지** — 모든 변수(루프, 임시, 로컬 포함)에 단어 전체 표기
