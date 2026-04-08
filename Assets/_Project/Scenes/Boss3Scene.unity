@@ -1326,7 +1326,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 1
+  m_TextWrappingMode: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
@@ -1883,6 +1883,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: '[Boss3]Robot black'
       objectReference: {fileID: 0}
+    - target: {fileID: 2623968487549978886, guid: 1b51a2ca5ec99b64087850518dfe7187, type: 3}
+      propertyPath: _moveSpeed
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2623968487549978886, guid: 1b51a2ca5ec99b64087850518dfe7187, type: 3}
+      propertyPath: _throwRadius
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 5360980376533864793, guid: 1b51a2ca5ec99b64087850518dfe7187, type: 3}
+      propertyPath: _damagePerSlash
+      value: 0.3
+      objectReference: {fileID: 0}
     - target: {fileID: 6979005135163670194, guid: 1b51a2ca5ec99b64087850518dfe7187, type: 3}
       propertyPath: m_LocalPosition.x
       value: 8.465265
@@ -1940,7 +1952,7 @@ GameObject:
   - component: {fileID: 1432302442}
   - component: {fileID: 1432302441}
   - component: {fileID: 1432302440}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -5,19 +5,22 @@ namespace Boss3
 {
     public class Stage3Boss : BossEnemy
 {
-    
+    [Header("기본 패턴")]
     [SerializeField] private ScopePattern _scopePattern;
     [SerializeField] private SmokeBomb _smokeBombPattern;
     [SerializeField] private OscillatingBulletPattern _OscillatingBulletPattern;
-    [SerializeField] private OscillatingBulletPattern _StrongOscillatingBulletPattern;
-
     [SerializeField] private MovePattern _movePattern;
 
+    [Header("강화 패턴")]
+    [SerializeField] private OscillatingBulletPattern _StrongOscillatingBulletPattern;
     [SerializeField] private SmokeTeleportPattern _smokeTeleportPattern;
+
+    [Header("보스 설정")]
+    [SerializeField] private float _damagePerSlash;
 
         
 
-        protected override BossPattern[] GetPatternsForPhase(int phaseIndex)
+    protected override BossPattern[] GetPatternsForPhase(int phaseIndex)
     {
         if (phaseIndex == 0)
         {
@@ -56,6 +59,34 @@ namespace Boss3
             base.Hit(bullet);
             Debug.Log("hit" + bullet);
             
+    }
+
+    public override ExecutionResult HandleExecution(ExecutionContext context)
+    {
+        
+        if(context.SlashVfx != null)
+        context.SlashVfx.Play(context.SlicePosition,context.SlashDirection);
+
+        float damageAmount = MaxHp * _damagePerSlash;
+        float newHp = Mathf.Max(0f,Hp-damageAmount);
+        SetHp(newHp);
+
+        
+        //TODO HP에 따른 페이즈 인식
+
+        if(Hp <= 0f)
+            {
+                TriggerDeathSequence();
+            }else
+            {
+                Debug.Log($"남은 보스의 Hp : {Hp}");
+            }
+
+        return new ExecutionResult
+        {
+        Target = this,
+        Position = context.SlicePosition
+        };
     }
 
     protected override IEnumerator OnBossIntro()
