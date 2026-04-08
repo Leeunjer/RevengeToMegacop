@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: a634ed487906bda4bb55814e354688fd
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 269650
+  packageName: Pixel Shooting Projectiles VFX Effects URP
+  packageVersion: 1.0
+  assetPath: Assets/PixelProjectileShootingEffectsURP/Materials/Trail01_ADBScroll
+    2.mat
+  uploadId: 624781

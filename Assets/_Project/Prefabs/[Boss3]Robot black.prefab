@@ -1538,9 +1538,10 @@ MonoBehaviour:
   _scopePattern: {fileID: 7536057993033147567}
   _smokeBombPattern: {fileID: 8856337149471782278}
   _OscillatingBulletPattern: {fileID: 4009033463006842335}
-  _StrongOscillatingBulletPattern: {fileID: 763113586991929881}
   _movePattern: {fileID: 680836755990462844}
+  _StrongOscillatingBulletPattern: {fileID: 763113586991929881}
   _smokeTeleportPattern: {fileID: 2623968487549978886}
+  _damagePerSlash: 0.3
 --- !u!114 &4282593184363565272
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2937,7 +2938,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cooldown: 2
   weight: 1
-  bulletPrefab: {fileID: 7832949925742630572, guid: 42fb451f4c918484e9cf290ec9eadcd9, type: 3}
+  bulletPrefab: {fileID: 2781076839539695555, guid: e7c555eabd0aa664d9fa316e1701772b, type: 3}
   bulletSpeed: 10
   bulletsPerShot: 1
   timeBetweenShots: 0.1
@@ -4208,8 +4209,8 @@ MonoBehaviour:
   _smokeBombPrefab: {fileID: 6291559461498047967, guid: 60fc7659b5915e8459607406fdc4190e, type: 3}
   _throwPoint: {fileID: 8080774057111371339}
   _smokeCount: 3
-  _throwRadius: 10
-  _moveSpeed: 10
+  _throwRadius: 25
+  _moveSpeed: 20
   _arriveDistance: 0.8
   _groundLayer:
     serializedVersion: 2
@@ -4959,7 +4960,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cooldown: 2
   weight: 1
-  bulletPrefab: {fileID: 7832949925742630572, guid: 42fb451f4c918484e9cf290ec9eadcd9, type: 3}
+  bulletPrefab: {fileID: 2781076839539695555, guid: e7c555eabd0aa664d9fa316e1701772b, type: 3}
   bulletSpeed: 10
   bulletsPerShot: 1
   timeBetweenShots: 0.1

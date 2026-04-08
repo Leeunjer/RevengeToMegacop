@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 48b0c100c7dc0fd42be519f3aa0ac6a4
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 310791
+  packageName: Robots with animations and Assets
+  packageVersion: 1.0.0
+  assetPath: Assets/Robot assets/Environment/Prefab/table.prefab
+  uploadId: 731942

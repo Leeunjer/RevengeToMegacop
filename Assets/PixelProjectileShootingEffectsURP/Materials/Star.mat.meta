@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 278f6897a8644e844a47c901d93c924c
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 269650
+  packageName: Pixel Shooting Projectiles VFX Effects URP
+  packageVersion: 1.0
+  assetPath: Assets/PixelProjectileShootingEffectsURP/Materials/Star.mat
+  uploadId: 624781
