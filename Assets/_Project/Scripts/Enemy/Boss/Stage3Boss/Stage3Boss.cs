@@ -50,6 +50,14 @@ namespace Boss3
     protected override void OnPhaseChanged(int phaseIndex, BossPhaseData data)
     {
         Debug.Log($"페이즈 {phaseIndex + 1} 진입!");
+
+        if (phaseIndex == 1)
+            {
+                transform.position = Vector3.zero;
+                //TODO 특정 모션
+
+                
+            }
     }
 
     public override void Hit(Bullet bullet)
@@ -71,8 +79,8 @@ namespace Boss3
         float newHp = Mathf.Max(0f,Hp-damageAmount);
         SetHp(newHp);
 
+        CheckPhaseTransition();
         
-        //TODO HP에 따른 페이즈 인식
 
         if(Hp <= 0f)
             {
@@ -88,6 +96,8 @@ namespace Boss3
         Position = context.SlicePosition
         };
     }
+
+    
 
     protected override IEnumerator OnBossIntro()
     {
