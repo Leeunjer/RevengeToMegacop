@@ -1,4 +1,4 @@
-# /review — 변경분 코드 리뷰
+# /unity-review — Unity C# 변경분 코드 리뷰
 
 변경된 파일만 대상으로 Unity C# 코드를 리뷰한다. 전체 프로젝트 리뷰가 필요하면 `unity-code-architecture-reviewer` 에이전트를 사용할 것.
 
