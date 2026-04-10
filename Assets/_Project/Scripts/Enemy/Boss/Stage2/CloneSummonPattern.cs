@@ -42,6 +42,9 @@ public class CloneSummonPattern : BossPattern
         int cloneCount = UnityEngine.Random.Range(minClones, maxClones + 1);
         WaitForSeconds spawnWait = new WaitForSeconds(spawnInterval);
 
+        Stage2Boss stage2Boss = boss as Stage2Boss;
+        stage2Boss?.PauseMovement();
+
         for (int i = 0; i < cloneCount; i++)
         {
             // 현재 살아있는 분신 수가 최대치면 소환 중단
@@ -74,6 +77,8 @@ public class CloneSummonPattern : BossPattern
                 yield return spawnWait;
             }
         }
+
+        stage2Boss?.ResumeMovement();
 
         // 분신이 활동할 시간 확보 후 패턴 완료
         yield return new WaitForSeconds(afterDelay);

@@ -25,6 +25,12 @@ public class TeleportPattern : BossPattern
     [SerializeField] private float proximityTriggerDistance = 11f;
     [SerializeField] private float proximityCooldown = 4f;
 
+    [Header("VFX")]
+    [SerializeField] private GameObject disappearVFX;
+    [SerializeField] private GameObject appearVFX;
+    [SerializeField] private float vfxLifetime = 2f;
+
+
     private BossEnemy cachedBoss;
     private float lastProximityTeleportTime = float.NegativeInfinity;
 
@@ -57,13 +63,32 @@ public class TeleportPattern : BossPattern
     /// <summary>보스를 플레이어 기준 원거리 랜덤 위치로 즉시 이동시킨다.</summary>
     private void TeleportTo(BossEnemy boss, Transform target)
     {
+        StartCoroutine(TeleportCoroutine(boss, target));
+    }
+    private IEnumerator TeleportCoroutine(BossEnemy boss, Transform target)
+    {
+        // 사라지는 이펙트
+        if (disappearVFX != null)
+        {
+            GameObject vfx = Instantiate(disappearVFX, boss.transform.position, Quaternion.identity);
+            Destroy(vfx, vfxLifetime);
+        }
+
+        yield return new WaitForSeconds(teleportDelay);
+
+        // 이동
         float angle = UnityEngine.Random.Range(0f, 360f);
         float distance = UnityEngine.Random.Range(minDistance, maxDistance);
-
         Vector3 offset = Quaternion.Euler(0f, angle, 0f) * Vector3.forward * distance;
         Vector3 newPos = target.position + offset;
         newPos.y = boss.transform.position.y;
-
         boss.transform.position = newPos;
+
+        // 나타나는 이펙트
+        if (appearVFX != null)
+        {
+            GameObject vfx = Instantiate(appearVFX, boss.transform.position, Quaternion.identity);
+            Destroy(vfx, vfxLifetime);
+        }
     }
 }

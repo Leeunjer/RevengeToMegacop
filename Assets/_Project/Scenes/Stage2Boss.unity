@@ -516,15 +516,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1332bd655b33436881fcb31ad1db82c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  warningPrefab: {fileID: 733045781012032798, guid: 6024e5a298a504b2787c086ff19b327f, type: 3}
-  warningRadius: 2.5
-  warningDuration: 0.5
+  warningPrefab: {fileID: 4932088507883938021, guid: 0e5709a7ddb77924090c112cf73bb98a, type: 3}
+  warningRadius: 0.7
+  warningDuration: 1
   bulletPrefab: {fileID: 3370167828950650170, guid: 041e2e27c600f4c8cb7e0d2910e3c5a6, type: 3}
   burstCount: 5
   bulletsPerBurst: 8
   bulletSpeed: 15
-  spawnHeight: 15
-  rainDamage: 10
+  spawnHeight: 12
+  rainDamage: 20
   repeatInterval: 4
 --- !u!1 &450960401
 GameObject:
@@ -580,7 +580,7 @@ MonoBehaviour:
   cloneLifetime: 1000
   spawnInterval: 0.5
   afterDelay: 1
-  bulletPrefab: {fileID: 3370167828950650170, guid: 1a5bca38494e74aee9fdf6d7afeab1a4, type: 3}
+  bulletPrefab: {fileID: 3370167828950650170, guid: b0a1419bff46241568f3b08b114352d0, type: 3}
   bulletSpeed: 30
 --- !u!4 &491393346 stripped
 Transform:
@@ -1155,7 +1155,7 @@ MonoBehaviour:
   cooldown: 1
   weight: 1
   aimDuration: 1
-  aimLineColor: {r: 1, g: 0, b: 0, a: 1}
+  aimLineColor: {r: 0.9471822, g: 0, b: 1, a: 1}
   aimLineWidth: 0.05
   aimLineLength: 50
   bulletPrefab: {fileID: 3370167828950650170, guid: 1a5bca38494e74aee9fdf6d7afeab1a4, type: 3}
@@ -1191,6 +1191,7 @@ GameObject:
   - component: {fileID: 931758846}
   - component: {fileID: 931758847}
   - component: {fileID: 931758848}
+  - component: {fileID: 931758849}
   m_Layer: 7
   m_Name: Stage2Boss
   m_TagString: Enemy
@@ -1319,6 +1320,8 @@ MonoBehaviour:
   maxDamagePerHitRatio: 0.15
   bossAnimator: {fileID: 931758848}
   weaponPoint: {fileID: 314148342}
+  knockbackDistance: 1.5
+  knockbackDuration: 0.15
   arrowRainPattern: {fileID: 447062199}
   phase1Patterns:
   - {fileID: 904950011}
@@ -1328,6 +1331,7 @@ MonoBehaviour:
   - {fileID: 1053918992}
   - {fileID: 450960403}
   - {fileID: 1180897391}
+  strafeMovement: {fileID: 931758849}
 --- !u!54 &931758847
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1367,6 +1371,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa0cb9f0a12db904ebe251130cc1f10e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &931758849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 931758840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9b36a7167e96427ab552191555af069, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 5
+  preferredDistance: 15
+  directionChangeInterval: 3
 --- !u!1 &944183186
 GameObject:
   m_ObjectHideFlags: 0
@@ -1686,6 +1705,9 @@ MonoBehaviour:
   afterDelay: 3
   proximityTriggerDistance: 8
   proximityCooldown: 5
+  disappearVFX: {fileID: 3744133877081091469, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
+  appearVFX: {fileID: 3744133877081091469, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
+  vfxLifetime: 0.7
 --- !u!4 &1180897392
 Transform:
   m_ObjectHideFlags: 0

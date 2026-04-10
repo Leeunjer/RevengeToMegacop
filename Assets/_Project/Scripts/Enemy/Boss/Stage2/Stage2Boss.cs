@@ -30,6 +30,21 @@ public class Stage2Boss : BossEnemy
     [Header("Phase2 Patterns")]
     [SerializeField] private BossPattern[] phase2Patterns;
 
+    [SerializeField] private BossStrafeMovement strafeMovement;
+
+    /// <summary>공격 패턴 시작 시 호출. 스트레이핑 이동을 일시정지한다.</summary>
+    public void PauseMovement()
+    {
+        if (strafeMovement != null) strafeMovement.Pause();
+    }
+
+    /// <summary>공격 패턴 종료 시 호출. 스트레이핑 이동을 재개한다.</summary>
+    public void ResumeMovement()
+    {
+        if (strafeMovement != null) strafeMovement.Resume();
+    }
+
+
     /// <summary>
     /// 반사탄/처형만 데미지 허용. 1회 최대 데미지는 MaxHp의 15%.
     /// base.Hit() 호출 후 HP가 너무 많이 깎였으면 보정한다.
@@ -125,13 +140,13 @@ public class Stage2Boss : BossEnemy
 
     protected override IEnumerator OnBossIntro()
     {
-        // TODO: 등장 연출
 
         // 보스전 시작 시 화살비 가동
         if (arrowRainPattern != null)
         {
             arrowRainPattern.StartRain(Target, gameObject);
         }
+        if (strafeMovement != null) strafeMovement.StartStrafe(Target);
 
         yield break;
     }
@@ -145,6 +160,9 @@ public class Stage2Boss : BossEnemy
         {
             arrowRainPattern.StopRain();
         }
+        if (strafeMovement != null) strafeMovement.StopStrafe();
+
+
 
         // 사망 시 모든 분신 제거
         BossClone[] clones = FindObjectsByType<BossClone>(FindObjectsSortMode.None);
