@@ -132,6 +132,8 @@ public class Stage1Boss : BossEnemy
     {
         SetTarget(null);
         if (bossAgent != null) bossAgent.ResetPath();
+        pendingAnimationCompleteCallback = null;
+        pendingFireCallback = null;
         bool deathAnimComplete = false;
         RegisterAnimationCompleteCallback(() => deathAnimComplete = true);
         bossAnimator?.SetTrigger("Die");
