@@ -99,7 +99,7 @@ InitTestScene*.unity*
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
 
-Assets/_Practice/
+/Assets/_Practice/
 /Assets/_Practice.meta
 
 # 외부 에셋 (Git 미추적, 클라우드/Asset Store로 관리)
@@ -130,6 +130,14 @@ Assets/LowpolyCharacters_Undead3.meta
 .vscode/
 AGENTS.md
 
+Assets/Robot assets/
+Assets/Robot assets/.meta
+Assets/PixelProjectileShootingEffectsURP/
+Assets/PixelProjectileShootingEffectsURP/.meta
+Assets/IndieImpulse_Assets/
+Assets/IndieImpulse_Assets/.meta
+GEMINI.md
+
 .claude/settings.local.json
 
 # PPTX 보고서 생성 관련
@@ -140,11 +148,11 @@ package.json
 package-lock.json
 
 # Third-party assets (too large for Git LFS)
-Assets/_Project/Resource/Archer_LowPoly/**
-!Assets/_Project/Resource/Archer_LowPoly/**/*.meta
-Assets/_Project/Resource/ArrowsVFX/**
-!Assets/_Project/Resource/ArrowsVFX/**/*.meta
-Assets/_Project/Resource/PolygonSamurai/**
-!Assets/_Project/Resource/PolygonSamurai/**/*.meta
-Assets/_Project/Resource/UNI VFX/**
-!Assets/_Project/Resource/UNI VFX/**/*.meta
+Assets/_Project/Resource/Archer_LowPoly/
+Assets/_Project/Resource/Archer_LowPoly.meta
+Assets/_Project/Resource/ArrowsVFX/
+Assets/_Project/Resource/ArrowsVFX.meta
+Assets/_Project/Resource/PolygonSamurai/
+Assets/_Project/Resource/PolygonSamurai.meta
+Assets/_Project/Resource/UNI VFX/
+Assets/_Project/Resource/UNI VFX.meta
