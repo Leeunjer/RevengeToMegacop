@@ -36,6 +36,7 @@ Material:
   - _FEATURE_COLORRIM_ON
   - _FEATURE_DEPTHOVERLAPRIM_ON
   - _FEATURE_DIRECTIONALVISIBILITY_ON
+  - _FEATURE_PATTERNTEXTUREANIMATION_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
