@@ -11,12 +11,19 @@ public class Stage1BossShield : MonoBehaviour, IDamageable
     [SerializeField] private Transform followTarget; // 보스 루트 할당
 
     private float shieldGauge;
+    private Collider shieldCollider;
 
     public float ShieldRatio => maxShieldGauge > 0f ? shieldGauge / maxShieldGauge : 0f;
+    public bool IsActive => shieldGauge > 0f;
 
-    public event Action<float> OnShieldChanged; // 실드 게이지가 변할 때 비율(0~1)을 전달하는 이벤트    
+    public event Action<float> OnShieldChanged; // 실드 게이지가 변할 때 비율(0~1)을 전달하는 이벤트
 
     private Transform _target;
+
+    void Awake()
+    {
+        shieldCollider = GetComponent<Collider>();
+    }
 
     void LateUpdate()
     {
@@ -50,7 +57,18 @@ public class Stage1BossShield : MonoBehaviour, IDamageable
         ReflectToPlayer(bullet);
 
         if (shieldGauge <= 0f)
-            gameObject.SetActive(false);
+        {
+            shield.SetShieldActive(false, true);
+            if (shieldCollider != null) shieldCollider.enabled = false;
+        }
+    }
+
+    public void Regenerate()
+    {
+        shieldGauge = maxShieldGauge;
+        shield.SetShieldActive(true, true);
+        if (shieldCollider != null) shieldCollider.enabled = true;
+        OnShieldChanged?.Invoke(ShieldRatio);
     }
 
     private void ReflectToPlayer(Bullet bullet)

@@ -19,8 +19,10 @@ public class Stage1Boss : BossEnemy
 
     [SerializeField] private float kiteDistance = 8f;
     [SerializeField] private float kiteSwitchInterval = 1.5f;
+    [SerializeField] private float shieldRegenHpThreshold = 0.5f;
 
     private NavMeshAgent bossAgent;
+    private bool shieldRegenDone;
     private bool isPatternExecuting;
     private bool isKiting;
     private float kiteDirection = 1f;
@@ -74,13 +76,12 @@ public class Stage1Boss : BossEnemy
             shield.Initialize(player);
             shield.OnShieldChanged += OnShieldChanged;
         }
-        bossAnimator?.SetBool("HasShield", shield != null && shield.gameObject.activeSelf);
+        bossAnimator?.SetBool("HasShield", shield != null && shield.IsActive);
     }
 
     private void OnShieldChanged(float ratio)
     {
-        if (ratio <= 0f)
-            bossAnimator?.SetBool("HasShield", false);
+        bossAnimator?.SetBool("HasShield", ratio > 0f);
     }
 
     protected override void Update()
@@ -162,15 +163,21 @@ public class Stage1Boss : BossEnemy
 
     public override void Hit(Bullet bullet)
     {
-        if (shield != null && shield.gameObject.activeSelf)
+        if (shield != null && shield.IsActive)
             return;
 
         base.Hit(bullet);
         // bossAnimator?.SetTrigger("Hit");
-        
+
         if (bullet is not Stage1BossBomb bomb)
             bullet.Remove();
         Debug.Log($"Boss hit! Remaining HP: {Hp}");
+
+        if (!shieldRegenDone && shield != null && HpRatio <= shieldRegenHpThreshold)
+        {
+            shieldRegenDone = true;
+            shield.Regenerate();
+        }
     }
 
     protected override BossPattern[] GetPatternsForPhase(int phaseIndex)
