@@ -51,6 +51,7 @@ MonoBehaviour:
   _waitTime: 2
   _scopeMoveSpeed: 5
   _rayDistance: 20
+  _scopeDamage: 50
 --- !u!1 &7438969764752613311
 GameObject:
   m_ObjectHideFlags: 0

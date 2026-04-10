@@ -5001,7 +5001,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adc06503efd13754c88893bd3c96d200, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _bounceLimit: 3
+  _bounceLimit: 5
   _bounceCooldown: 0.05
   _pushOutDistance: 0.1
   _moveDirection: {x: 0, y: 0, z: 0}

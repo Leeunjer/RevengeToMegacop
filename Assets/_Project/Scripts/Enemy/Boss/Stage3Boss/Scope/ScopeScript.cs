@@ -15,6 +15,7 @@ public class ScopeScript : MonoBehaviour
     [SerializeField] private float _waitTime = 2f;
     [SerializeField] private float _scopeMoveSpeed = 5f;
     [SerializeField] private float _rayDistance = 20f;
+    [SerializeField] private float _scopeDamage = 15f;
 
 
     void Awake()
@@ -80,6 +81,8 @@ public class ScopeScript : MonoBehaviour
 
             if (hit.collider.CompareTag("Player"))
             {
+                PlayerStateController playerStateController = hit.collider.GetComponent<PlayerStateController>();
+                playerStateController.TakeDamage(_scopeDamage);
                 Debug.Log("플레이어 명중!");
             }
         }
