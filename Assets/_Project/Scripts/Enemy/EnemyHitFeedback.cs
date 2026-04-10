@@ -39,6 +39,9 @@ public class EnemyHitFeedback : MonoBehaviour
         Renderer[] renderers = GetComponentsInChildren<Renderer>();
         foreach (Renderer targetRenderer in renderers)
         {
+            if (targetRenderer.sharedMaterial == null || !targetRenderer.sharedMaterial.HasProperty("_BaseColor"))
+                continue;
+
             MMF_Flicker flicker = hitPlayer.AddFeedback(typeof(MMF_Flicker)) as MMF_Flicker;
             flicker.BoundRenderer = targetRenderer;
             flicker.FlickerDuration = flickerDuration;
