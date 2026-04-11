@@ -12,6 +12,7 @@ public class Stage1Boss : BossEnemy
 
     [SerializeField] private Transform player;
     [SerializeField] private Stage1BossShield shield;
+    [SerializeField] private Collider shieldHitbox;
     [SerializeField] private float attackRange = 10f;
     [SerializeField] private float bossMoveSpeed = 3f;
     
@@ -20,6 +21,7 @@ public class Stage1Boss : BossEnemy
     [SerializeField] private float kiteDistance = 8f;
     [SerializeField] private float kiteSwitchInterval = 1.5f;
     [SerializeField] private float shieldRegenHpThreshold = 0.5f;
+    [SerializeField] private float maxExecutionDamageRatio = 0.15f;
 
     private NavMeshAgent bossAgent;
     private bool shieldRegenDone;
@@ -76,12 +78,16 @@ public class Stage1Boss : BossEnemy
             shield.Initialize(player);
             shield.OnShieldChanged += OnShieldChanged;
         }
-        bossAnimator?.SetBool("HasShield", shield != null && shield.IsActive);
+        bool shieldActive = shield != null && shield.IsActive;
+        bossAnimator?.SetBool("HasShield", shieldActive);
+        if (shieldHitbox != null) shieldHitbox.enabled = shieldActive;
     }
 
     private void OnShieldChanged(float ratio)
     {
-        bossAnimator?.SetBool("HasShield", ratio > 0f);
+        bool shieldActive = ratio > 0f;
+        bossAnimator?.SetBool("HasShield", shieldActive);
+        if (shieldHitbox != null) shieldHitbox.enabled = shieldActive;
     }
 
     protected override void Update()
@@ -188,6 +194,34 @@ public class Stage1Boss : BossEnemy
             guidedMissilePattern,
             bombPattern,
             wavePattern
+        };
+    }
+
+    public override ExecutionResult HandleExecution(ExecutionContext context)
+    {
+        if (context.SlashVfx != null)
+            context.SlashVfx.Play(context.SlicePosition, context.SlashDirection);
+
+        if (shield != null && shield.IsActive)
+        {
+            Debug.Log($"[Execution] 실드 처형. 현재 게이지: {shield.ShieldRatio:P0}");
+            shield.TakeExecutionDamage();
+        }
+        else
+        {
+            float damage = MaxHp * maxExecutionDamageRatio;
+            float newHp = Mathf.Max(0f, Hp - damage);
+            SetHp(newHp);
+            Debug.Log($"Boss execution hit! Remaining HP: {Hp}");
+
+            if (newHp <= 0f)
+                TriggerDeathSequence();
+        }
+
+        return new ExecutionResult
+        {
+            Target = this,
+            Position = context.SlicePosition
         };
     }
 

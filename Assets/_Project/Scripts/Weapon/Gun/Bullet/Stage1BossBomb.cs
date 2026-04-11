@@ -19,16 +19,19 @@ public class Stage1BossBomb : Bullet
     private float totalElapsed;
     private bool isLaunched;
     private bool playerDirectlyHit;
+    private bool bossDirectlyHit;
     private Vector3 lastForward;
 
     override protected void OnTriggerEnter(Collider other)
     {
         if (!isLaunched) return;
         base.OnTriggerEnter(other);
- 
+
         GameObject obj = other.attachedRigidbody ? other.attachedRigidbody.gameObject : other.gameObject;
         if (obj.GetComponent<PlayerStateController>() != null)
             playerDirectlyHit = true;
+        else if (obj.GetComponent<IDamageable>() != null)
+            bossDirectlyHit = true;
     }
 
     public void Launch(Vector3 start, Vector3 target, float overrideLaunchDistance = -1f)
@@ -44,6 +47,7 @@ public class Stage1BossBomb : Bullet
         totalElapsed = 0f;
         isLaunched = true;
         playerDirectlyHit = false;
+        bossDirectlyHit = false;
 
         Vector3 horizontal = new Vector3(target.x - start.x, 0f, target.z - start.z);
         if (horizontal.sqrMagnitude > 0.01f)
@@ -142,7 +146,8 @@ public class Stage1BossBomb : Bullet
             IDamageable damageable = obj.GetComponent<IDamageable>();
             if (damageable != null)
             {
-                damageable.Hit(this);
+                if (!bossDirectlyHit)
+                    damageable.Hit(this);
                 break;
             }
         }
