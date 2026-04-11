@@ -388,4 +388,31 @@ public class ShieldCharger : EliteEnemy
             }
         }
     }
+
+    public override void Hit(Bullet bullet)
+    {
+        if (IsBlockingState())
+        {
+            return;
+        }
+
+        base.Hit(bullet);
+    }
+
+    private bool IsBlockingState()
+    {
+        switch (shieldChargerState)
+        {
+            case ShieldChargerState.Chase:
+            case ShieldChargerState.Prepare:
+            case ShieldChargerState.Dash:
+                return true;
+
+            case ShieldChargerState.Recover:
+            case ShieldChargerState.Shoot:
+            case ShieldChargerState.Cooldown:
+            default:
+                return false;
+        }
+    }
 }

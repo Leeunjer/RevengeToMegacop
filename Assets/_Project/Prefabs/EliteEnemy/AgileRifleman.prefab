@@ -784,6 +784,8 @@ MonoBehaviour:
   bodyMoveSpeed: 5
   bodyTurnSpeed: 10
   fireAngleTolerance: 8
+  canBeExecuted: 0
+  executionDamageRatio: 0.2
   preferredMinRange: 7
   preferredMaxRange: 14
   rollSpeed: 15
