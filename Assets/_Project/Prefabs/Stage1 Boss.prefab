@@ -140,7 +140,7 @@ GameObject:
   - component: {fileID: 794599513498380326}
   - component: {fileID: 2654975058737273334}
   - component: {fileID: 2897134818830045318}
-  m_Layer: 18
+  m_Layer: 20
   m_Name: Shield
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -409,7 +409,7 @@ GameObject:
   - component: {fileID: 7691223769722853749}
   - component: {fileID: 4445722107405771500}
   - component: {fileID: 5299659237791237898}
-  m_Layer: 18
+  m_Layer: 20
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
