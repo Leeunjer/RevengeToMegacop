@@ -304,7 +304,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponPoint: {fileID: 8466667072661275239}
   turnSpeed: 10
-  maxHp: 100
+  maxHp: 30
   moveSpeed: 3
   useNavMesh: 1
   mobAnimator: {fileID: 1276522164425110934}
