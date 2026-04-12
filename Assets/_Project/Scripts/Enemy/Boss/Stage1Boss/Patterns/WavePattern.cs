@@ -24,6 +24,7 @@ public class WavePattern : BossPattern
 
         Stage1Boss stage1Boss = boss as Stage1Boss;
         bool fireReady = false;
+        stage1Boss?.RegisterPatternCompleteCallback(onComplete);
         stage1Boss?.RegisterFireCallback(() => fireReady = true);
         stage1Boss?.NotifyPatternStart();
         stage1Boss?.BossAnimator?.SetTrigger("Wave");

@@ -5,11 +5,6 @@ using UnityEngine.AI;
 
 public class Stage1Boss : BossEnemy
 {
-    [SerializeField] private BasicShotPattern basicShotPattern;
-    [SerializeField] private GuidedMissilePattern guidedMissilePattern;
-    [SerializeField] private BombPattern bombPattern;
-    [SerializeField] private WavePattern wavePattern;
-
     [SerializeField] private Transform player;
     [SerializeField] private Stage1BossShield shield;
     [SerializeField] private Collider shieldHitbox;
@@ -22,22 +17,36 @@ public class Stage1Boss : BossEnemy
     [SerializeField] private float kiteSwitchInterval = 1.5f;
     [SerializeField] private float shieldRegenHpThreshold = 0.5f;
     [SerializeField] private float maxExecutionDamageRatio = 0.15f;
+    [SerializeField] private float stunDuration = 3f;
+    [SerializeField] private GameObject mobPrefab;
+    [SerializeField] private float spawnTriangleHeight = 5f;
+
+    private BasicShotPattern basicShotPattern;
+    private GuidedMissilePattern guidedMissilePattern;
+    private BombPattern bombPattern;
+    private WavePattern wavePattern;
 
     private NavMeshAgent bossAgent;
     private bool shieldRegenDone;
     private bool isPatternExecuting;
     private bool isKiting;
+    private bool isStunned;
     private float kiteDirection = 1f;
     private float kiteSwitchTimer;
     private Action pendingFireCallback;
     private Action pendingAnimationCompleteCallback;
+    private Action pendingPatternCompleteCallback;
     private float deathSinkAmount = 0.7f;
     private float deathSinkDuration = 1.5f;
 
     public Animator BossAnimator => bossAnimator;
 
     public void NotifyPatternStart() => isPatternExecuting = true;
-    public void NotifyPatternEnd() => isPatternExecuting = false;
+    public void NotifyPatternEnd()
+    {
+        isPatternExecuting = false;
+        pendingPatternCompleteCallback = null;
+    }
 
     public void StartKiting()
     {
@@ -53,6 +62,7 @@ public class Stage1Boss : BossEnemy
 
     public void RegisterFireCallback(Action callback) => pendingFireCallback = callback;
     public void RegisterAnimationCompleteCallback(Action callback) => pendingAnimationCompleteCallback = callback;
+    public void RegisterPatternCompleteCallback(Action callback) => pendingPatternCompleteCallback = callback;
 
     // Animation Event에서 호출 — 발사 시작 신호
     public void OnFireAnimationEvent()
@@ -66,6 +76,14 @@ public class Stage1Boss : BossEnemy
     {
         pendingAnimationCompleteCallback?.Invoke();
         pendingAnimationCompleteCallback = null;
+    }
+
+    void Awake()
+    {
+        basicShotPattern = GetComponent<BasicShotPattern>();
+        guidedMissilePattern = GetComponent<GuidedMissilePattern>();
+        bombPattern = GetComponent<BombPattern>();
+        wavePattern = GetComponent<WavePattern>();
     }
 
     protected override void Start()
@@ -90,9 +108,65 @@ public class Stage1Boss : BossEnemy
         if (shieldHitbox != null) shieldHitbox.enabled = shieldActive;
     }
 
+    public void EnterStun()
+    {
+        if (Hp <= 0f) return;
+        if (shield != null && shield.IsActive) return;
+        isStunned = true;
+        StopKiting();
+        pendingPatternCompleteCallback?.Invoke();
+        pendingPatternCompleteCallback = null;
+        StopAllCoroutines();
+        basicShotPattern?.StopAllCoroutines();
+        guidedMissilePattern?.StopAllCoroutines();
+        bombPattern?.StopAllCoroutines();
+        wavePattern?.StopAllCoroutines();
+        isPatternExecuting = false;
+        pendingFireCallback = null;
+        pendingAnimationCompleteCallback = null;
+        bossAnimator?.SetBool("IsStunned", true);
+        SpawnMob();
+        StartCoroutine(StunRoutine());
+    }
+
+    private void SpawnMob()
+    {
+        if (mobPrefab == null || Target == null) return;
+
+        Vector3 bossPos = transform.position;
+        Vector3 playerPos = Target.position;
+        Vector3 midpoint = (bossPos + playerPos) * 0.5f;
+
+        Vector3 forward = playerPos - bossPos;
+        forward.y = 0f;
+        if (forward == Vector3.zero) return;
+
+        Vector3 right = Vector3.Cross(Vector3.up, forward.normalized);
+        float side = UnityEngine.Random.value > 0.5f ? 1f : -1f;
+
+        Vector3 spawnPos = midpoint + right * side * spawnTriangleHeight;
+        spawnPos.y = 0f;
+
+        GameObject mobObj = Instantiate(mobPrefab, spawnPos, Quaternion.identity);
+        if (mobObj.TryGetComponent<Stage1StunMob>(out Stage1StunMob mob))
+            mob.SetTarget(Target);
+    }
+
+    private IEnumerator StunRoutine()
+    {
+        yield return new WaitForSeconds(stunDuration);
+        bossAnimator?.SetBool("IsStunned", false);
+        bossAnimator?.SetTrigger("StunRecover");
+        bool recoverComplete = false;
+        RegisterAnimationCompleteCallback(() => recoverComplete = true);
+        yield return new WaitUntil(() => recoverComplete);
+        isStunned = false;
+    }
+
     protected override void Update()
     {
         if (Target == null) return;
+        if (isStunned) return;
 
         float distance = Vector3.Distance(transform.position, Target.position);
         if (distance <= attackRange)
@@ -182,6 +256,8 @@ public class Stage1Boss : BossEnemy
         if (!shieldRegenDone && shield != null && HpRatio <= shieldRegenHpThreshold)
         {
             shieldRegenDone = true;
+            if (bullet is Stage1BossBomb)
+                EnterStun();
             shield.Regenerate();
         }
     }

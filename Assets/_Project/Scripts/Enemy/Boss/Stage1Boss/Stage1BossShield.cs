@@ -52,7 +52,7 @@ public class Stage1BossShield : MonoBehaviour, IDamageable
     public void Hit(Bullet bullet)
     {
         if (bullet == null) return;
-        if (shieldGauge <= 0f) return;
+        if (shieldGauge < 0.01f) return;
 
         float maxDamage = maxShieldGauge * maxDamagePerHitRatio;
         float minFromDamageRatio = Mathf.Max(shieldGauge - maxDamage, 0f);
@@ -70,7 +70,7 @@ public class Stage1BossShield : MonoBehaviour, IDamageable
 
     public void TakeExecutionDamage()
     {
-        if (shieldGauge <= 0f) return;
+        if (shieldGauge < 0.01f) return;
 
         float damage = maxShieldGauge * maxExecutionDamageRatio;
         shieldGauge = Mathf.Max(shieldGauge - damage, GetMinAllowedGauge());

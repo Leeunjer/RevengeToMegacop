@@ -22,6 +22,7 @@ public class BasicShotPattern : BossPattern
 
         bool fireReady = false;
         bool animComplete = false;
+        stage1Boss?.RegisterPatternCompleteCallback(onComplete);
         stage1Boss?.RegisterFireCallback(() => fireReady = true);
         stage1Boss?.RegisterAnimationCompleteCallback(() => animComplete = true);
 

@@ -148,6 +148,7 @@ public class Stage1BossBomb : Bullet
             {
                 if (!bossDirectlyHit)
                     damageable.Hit(this);
+                obj.GetComponent<Stage1Boss>()?.EnterStun();
                 break;
             }
         }
