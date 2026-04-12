@@ -411,7 +411,7 @@ GameObject:
   - component: {fileID: 5299659237791237898}
   m_Layer: 20
   m_Name: Point Light
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -538,7 +538,7 @@ GameObject:
   - component: {fileID: 6373017698198396878}
   m_Layer: 7
   m_Name: Stage1 Boss
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

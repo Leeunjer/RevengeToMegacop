@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Stage1BossBomb : Bullet
@@ -20,6 +21,7 @@ public class Stage1BossBomb : Bullet
     private bool isLaunched;
     private bool playerDirectlyHit;
     private bool bossDirectlyHit;
+    private bool wasReflectedByShield;
     private Vector3 lastForward;
 
     override protected void OnTriggerEnter(Collider other)
@@ -30,6 +32,11 @@ public class Stage1BossBomb : Bullet
         GameObject obj = other.attachedRigidbody ? other.attachedRigidbody.gameObject : other.gameObject;
         if (obj.GetComponent<PlayerStateController>() != null)
             playerDirectlyHit = true;
+        else if (other.gameObject.GetComponent<Stage1BossShield>() != null)
+        {
+            wasReflectedByShield = true;
+            bossDirectlyHit = true;
+        }
         else if (obj.GetComponent<IDamageable>() != null)
             bossDirectlyHit = true;
     }
@@ -48,6 +55,7 @@ public class Stage1BossBomb : Bullet
         isLaunched = true;
         playerDirectlyHit = false;
         bossDirectlyHit = false;
+        wasReflectedByShield = false;
 
         Vector3 horizontal = new Vector3(target.x - start.x, 0f, target.z - start.z);
         if (horizontal.sqrMagnitude > 0.01f)
@@ -131,25 +139,47 @@ public class Stage1BossBomb : Bullet
         isLaunched = false;
 
         Collider[] hits = Physics.OverlapSphere(transform.position, explosionRadius);
+        bool playerProcessed = false;
+        bool bossProcessed = false;
+        HashSet<GameObject> processedMobs = new HashSet<GameObject>();
         foreach (var hit in hits)
         {
             GameObject obj = hit.attachedRigidbody ? hit.attachedRigidbody.gameObject : hit.gameObject;
 
-            PlayerStateController playerState = obj.GetComponent<PlayerStateController>();
-            if (playerState != null)
+            if (!playerProcessed)
             {
-                if (!playerDirectlyHit)
-                    playerState.TakeDamage(Damage);
-                break;
+                PlayerStateController playerState = obj.GetComponent<PlayerStateController>();
+                if (playerState != null)
+                {
+                    if (!playerDirectlyHit)
+                        playerState.TakeDamage(Damage);
+                    playerProcessed = true;
+                    continue;
+                }
             }
 
-            IDamageable damageable = obj.GetComponent<IDamageable>();
-            if (damageable != null)
+            if (!bossProcessed)
             {
-                if (!bossDirectlyHit)
-                    damageable.Hit(this);
-                obj.GetComponent<Stage1Boss>()?.EnterStun();
-                break;
+                Stage1Boss stage1Boss = obj.GetComponent<Stage1Boss>();
+                if (stage1Boss != null)
+                {
+                    if (!bossDirectlyHit)
+                        stage1Boss.Hit(this);
+                    if (!wasReflectedByShield)
+                        stage1Boss.EnterStun();
+                    bossProcessed = true;
+                    continue;
+                }
+            }
+
+            if (!processedMobs.Contains(obj))
+            {
+                Enemy enemy = obj.GetComponent<Enemy>();
+                if (enemy != null && !(enemy is Stage1Boss))
+                {
+                    enemy.Hit(this);
+                    processedMobs.Add(obj);
+                }
             }
         }
 

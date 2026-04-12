@@ -31,6 +31,7 @@ public class Stage1Boss : BossEnemy
     private bool isPatternExecuting;
     private bool isKiting;
     private bool isStunned;
+    private bool isLookingLocked;
     private float kiteDirection = 1f;
     private float kiteSwitchTimer;
     private Action pendingFireCallback;
@@ -59,6 +60,9 @@ public class Stage1Boss : BossEnemy
         isKiting = false;
         if (bossAgent != null) bossAgent.ResetPath();
     }
+
+    public void LockLooking() => isLookingLocked = true;
+    public void UnlockLooking() => isLookingLocked = false;
 
     public void RegisterFireCallback(Action callback) => pendingFireCallback = callback;
     public void RegisterAnimationCompleteCallback(Action callback) => pendingAnimationCompleteCallback = callback;
@@ -122,6 +126,7 @@ public class Stage1Boss : BossEnemy
         bombPattern?.StopAllCoroutines();
         wavePattern?.StopAllCoroutines();
         isPatternExecuting = false;
+        isLookingLocked = false;
         pendingFireCallback = null;
         pendingAnimationCompleteCallback = null;
         bossAnimator?.SetBool("IsStunned", true);
@@ -174,10 +179,13 @@ public class Stage1Boss : BossEnemy
 
         MoveTowardTarget(distance);
 
-        Vector3 direction = Target.position - transform.position;
-        direction.y = 0f;
-        if (direction != Vector3.zero)
-            transform.rotation = Quaternion.LookRotation(direction);
+        if (!isLookingLocked)
+        {
+            Vector3 direction = Target.position - transform.position;
+            direction.y = 0f;
+            if (direction != Vector3.zero)
+                transform.rotation = Quaternion.LookRotation(direction);
+        }
     }
 
     private void MoveTowardTarget(float distance)
@@ -244,7 +252,11 @@ public class Stage1Boss : BossEnemy
     public override void Hit(Bullet bullet)
     {
         if (shield != null && shield.IsActive)
+        {
+            if (bullet is Stage1BossBomb)
+                shield.Hit(bullet);
             return;
+        }
 
         base.Hit(bullet);
         // bossAnimator?.SetTrigger("Hit");

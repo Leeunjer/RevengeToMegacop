@@ -17,6 +17,7 @@ public class Stage1StunMob : Enemy
 
     void Awake()
     {
+        gameObject.tag = "Enemy";
         if (weaponPrefab != null)
         {
             GameObject weaponObj = Instantiate(weaponPrefab);
@@ -31,8 +32,8 @@ public class Stage1StunMob : Enemy
 
     protected override void Start()
     {
-        if (spawnEffectPrefab != null)            
-            Instantiate(spawnEffectPrefab, transform.position, Quaternion.identity, transform);
+        if (spawnEffectPrefab != null)
+            Instantiate(spawnEffectPrefab, transform, false);
         base.Start();
         StartCoroutine(ShootRoutine());
     }
@@ -73,6 +74,12 @@ public class Stage1StunMob : Enemy
 
             yield return new WaitForSeconds(shootCooldown);
         }
+    }
+
+    public override void Hit(Bullet bullet)
+    {
+        base.Hit(bullet);
+        bullet?.Remove();
     }
 
     // Animation Event에서 호출 — 발사 신호
