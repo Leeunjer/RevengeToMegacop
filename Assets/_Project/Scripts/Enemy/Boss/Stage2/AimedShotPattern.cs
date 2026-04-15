@@ -21,6 +21,7 @@ public class AimedShotPattern : BossPattern
     [SerializeField] private float bowReleaseDelay = 0.5f;
     [SerializeField] private float afterDelay = 1.5f;
     [SerializeField] private GameObject muzzleEffectPrefab;
+    [SerializeField] private AudioClip shootSound;
 
     private LineRenderer lineRenderer;
 
@@ -60,18 +61,21 @@ public class AimedShotPattern : BossPattern
         Stage2Boss stage2Boss = boss as Stage2Boss;
         stage2Boss?.PauseMovement();
 
-        // 조준 방향 고정
         Transform firePoint = (boss as Stage2Boss)?.WeaponPoint ?? boss.transform;
-        Vector3 aimDirection = (target.position - firePoint.position).normalized;
-        aimDirection.y = 0f;
+        Vector3 aimDirection = Vector3.forward;
 
-        // 조준선 표시
+        // 조준선 표시 — 매 프레임 방향 재계산 (순간이동 후에도 플레이어 방향 추적)
         lineRenderer.enabled = true;
         float elapsed = 0f;
 
         while (elapsed < aimDuration)
         {
             Vector3 startPos = firePoint.position;
+            Vector3 toTarget = target.position - startPos;
+            toTarget.y = 0f;
+            if (toTarget.sqrMagnitude > 0.01f)
+                aimDirection = toTarget.normalized;
+
             Vector3 endPos = startPos + aimDirection * aimLineLength;
             lineRenderer.SetPosition(0, startPos);
             lineRenderer.SetPosition(1, endPos);
@@ -102,6 +106,8 @@ public class AimedShotPattern : BossPattern
             GameObject effect = Instantiate(muzzleEffectPrefab, firePos, fireRotation);
             Destroy(effect, 2f);
         }
+
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX(shootSound);
 
         Bullet bullet = BulletPool.Instance.Get(bulletPrefab, firePos, fireRotation);
         bullet.Speed = bulletSpeed;

@@ -25,10 +25,16 @@ public class TeleportPattern : BossPattern
     [SerializeField] private float proximityTriggerDistance = 11f;
     [SerializeField] private float proximityCooldown = 4f;
 
+    [Header("Direction")]
+    [SerializeField] private float directionSpread = 60f;
+
     [Header("VFX")]
     [SerializeField] private GameObject disappearVFX;
     [SerializeField] private GameObject appearVFX;
     [SerializeField] private float vfxLifetime = 2f;
+
+    [Header("Sound")]
+    [SerializeField] private AudioClip teleportSound;
 
 
     private BossEnemy cachedBoss;
@@ -42,6 +48,7 @@ public class TeleportPattern : BossPattern
     private void Update()
     {
         if (cachedBoss == null || cachedBoss.Target == null) return;
+        if (cachedBoss.Hp <= 0f) return;  // 보스 사망 시 순간이동 금지
         if (Time.time < lastProximityTeleportTime + proximityCooldown) return;
 
         float dist = Vector3.Distance(cachedBoss.transform.position, cachedBoss.Target.position);
@@ -67,6 +74,11 @@ public class TeleportPattern : BossPattern
     }
     private IEnumerator TeleportCoroutine(BossEnemy boss, Transform target)
     {
+        Stage2Boss stage2Boss = boss as Stage2Boss;
+
+        // 텔레포트 시작 — 이 시점부터 넉백 차단
+        stage2Boss?.SetTeleporting(true);
+
         // 사라지는 이펙트
         if (disappearVFX != null)
         {
@@ -76,13 +88,24 @@ public class TeleportPattern : BossPattern
 
         yield return new WaitForSeconds(teleportDelay);
 
-        // 이동
-        float angle = UnityEngine.Random.Range(0f, 360f);
+        // 이동 — 플레이어에게서 멀어지는 방향 기준으로 ±directionSpread 범위 내 이동
+        Vector3 awayDir = boss.transform.position - target.position;
+        awayDir.y = 0f;
+        if (awayDir.sqrMagnitude < 0.01f) awayDir = Vector3.forward;
+        awayDir.Normalize();
+
+        float baseAngle = Mathf.Atan2(awayDir.x, awayDir.z) * Mathf.Rad2Deg;
+        float finalAngle = baseAngle + UnityEngine.Random.Range(-directionSpread, directionSpread);
         float distance = UnityEngine.Random.Range(minDistance, maxDistance);
-        Vector3 offset = Quaternion.Euler(0f, angle, 0f) * Vector3.forward * distance;
+        Vector3 offset = Quaternion.Euler(0f, finalAngle, 0f) * Vector3.forward * distance;
         Vector3 newPos = target.position + offset;
         newPos.y = boss.transform.position.y;
         boss.transform.position = newPos;
+
+        // 텔레포트 완료 — 넉백 허용 재개
+        stage2Boss?.SetTeleporting(false);
+
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX(teleportSound);
 
         // 나타나는 이펙트
         if (appearVFX != null)

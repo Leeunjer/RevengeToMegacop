@@ -30,6 +30,9 @@ public class ArrowRainPattern : MonoBehaviour
     [Header("Repeat Settings")]
     [SerializeField] private float repeatInterval = 5f;
 
+    [Header("Sound")]
+    [SerializeField] private AudioClip warningSound;
+
     private Transform target;
     private GameObject owner;
     private Coroutine rainLoop;
@@ -47,11 +50,8 @@ public class ArrowRainPattern : MonoBehaviour
     /// <summary>화살비 중단. 보스 사망 시 호출한다.</summary>
     public void StopRain()
     {
-        if (rainLoop != null)
-        {
-            StopCoroutine(rainLoop);
-            rainLoop = null;
-        }
+        StopAllCoroutines();
+        rainLoop = null;
     }
 
     private IEnumerator RainLoop()
@@ -85,6 +85,7 @@ public class ArrowRainPattern : MonoBehaviour
                 Vector3 warningPos = new Vector3(lockedPos.x, 0.01f, lockedPos.z);
                 warning = Instantiate(warningPrefab, warningPos, Quaternion.identity);
                 warning.transform.localScale = Vector3.one * warningRadius;
+                if (AudioManager.Instance != null) AudioManager.Instance.PlaySFXAtPoint(warningSound, warningPos);
             }
 
             // 경고 표시 중 플레이어는 이동 가능 (경고는 고정)

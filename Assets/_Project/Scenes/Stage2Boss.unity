@@ -322,6 +322,67 @@ MonoBehaviour:
   bowReleaseDelay: 0.5
   afterDelay: 0.5
   muzzleEffectPrefab: {fileID: 0}
+--- !u!1001 &304986512
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 876250533365886274, guid: 27801296dda1a064a9eccc7bec09aafa, type: 3}
+      propertyPath: bossPrefab
+      value: 
+      objectReference: {fileID: 931758840}
+    - target: {fileID: 1309691744196833874, guid: 27801296dda1a064a9eccc7bec09aafa, type: 3}
+      propertyPath: m_Name
+      value: EnemySpawner
+      objectReference: {fileID: 0}
+    - target: {fileID: 8179393913050493634, guid: 27801296dda1a064a9eccc7bec09aafa, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8179393913050493634, guid: 27801296dda1a064a9eccc7bec09aafa, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8179393913050493634, guid: 27801296dda1a064a9eccc7bec09aafa, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8179393913050493634, guid: 27801296dda1a064a9eccc7bec09aafa, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8179393913050493634, guid: 27801296dda1a064a9eccc7bec09aafa, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8179393913050493634, guid: 27801296dda1a064a9eccc7bec09aafa, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8179393913050493634, guid: 27801296dda1a064a9eccc7bec09aafa, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8179393913050493634, guid: 27801296dda1a064a9eccc7bec09aafa, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8179393913050493634, guid: 27801296dda1a064a9eccc7bec09aafa, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8179393913050493634, guid: 27801296dda1a064a9eccc7bec09aafa, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 27801296dda1a064a9eccc7bec09aafa, type: 3}
 --- !u!1 &314148341
 GameObject:
   m_ObjectHideFlags: 0
@@ -528,6 +589,7 @@ MonoBehaviour:
   spawnHeight: 12
   rainDamage: 20
   repeatInterval: 4
+  warningSound: {fileID: 8300000, guid: 8af06cd9a1eff4b00b3525738e65b395, type: 3}
 --- !u!1 &450960401
 GameObject:
   m_ObjectHideFlags: 0
@@ -584,6 +646,7 @@ MonoBehaviour:
   afterDelay: 1
   bulletPrefab: {fileID: 3370167828950650170, guid: b0a1419bff46241568f3b08b114352d0, type: 3}
   bulletSpeed: 80
+  spawnSound: {fileID: 8300000, guid: 2647701a2b5e44f399d4e110c631229c, type: 3}
 --- !u!4 &491393346 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4871878313369370, guid: e300a2185ff1624448f3df56cbfd3618, type: 3}
@@ -1165,6 +1228,7 @@ MonoBehaviour:
   bowReleaseDelay: 0.5
   afterDelay: 0.5
   muzzleEffectPrefab: {fileID: 0}
+  shootSound: {fileID: 8300000, guid: 1d6e4132c5fa84d939b61bc74eda815c, type: 3}
 --- !u!4 &904950012
 Transform:
   m_ObjectHideFlags: 0
@@ -1326,6 +1390,8 @@ MonoBehaviour:
   weaponPoint: {fileID: 314148342}
   knockbackDistance: 1.5
   knockbackDuration: 0.15
+  hitSound: {fileID: 8300000, guid: 2e03d24d3860942afa58f8823cb81b42, type: 3}
+  deathSound: {fileID: 8300000, guid: 0c83c9162cc9e47ca9fe83f82bc2ee81, type: 3}
   arrowRainPattern: {fileID: 447062199}
   phase1Patterns:
   - {fileID: 904950011}
@@ -1425,6 +1491,53 @@ Transform:
   - {fileID: 450960402}
   m_Father: {fileID: 931758845}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &995829142
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 995829144}
+  - component: {fileID: 995829143}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &995829143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 995829142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f298cfc5dfd43fe44b4474dba93ba2aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioMixer: {fileID: 24100000, guid: c4ce70a378d2c484ea8b15db5d233bcf, type: 2}
+  sfxPoolSize: 8
+  defaultCrossfadeDuration: 1
+--- !u!4 &995829144
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 995829142}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1053918991
 GameObject:
   m_ObjectHideFlags: 0
@@ -1466,6 +1579,7 @@ MonoBehaviour:
   bowReleaseDelay: 0.1
   afterDelay: 0.5
   muzzleEffectPrefab: {fileID: 0}
+  shootSound: {fileID: 8300000, guid: ae1170de5081842818eb1c62cee4aee7, type: 3}
 --- !u!4 &1053918993
 Transform:
   m_ObjectHideFlags: 0
@@ -1708,15 +1822,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cooldown: 2
   weight: 1
-  minDistance: 8
-  maxDistance: 15
+  minDistance: 15
+  maxDistance: 20
   teleportDelay: 0.3
   afterDelay: 3
   proximityTriggerDistance: 15
   proximityCooldown: 2
+  directionSpread: 60
   disappearVFX: {fileID: 3744133877081091469, guid: 06148335cbe3f4cc08140e23a730b578, type: 3}
   appearVFX: {fileID: 3744133877081091469, guid: 06148335cbe3f4cc08140e23a730b578, type: 3}
   vfxLifetime: 0.7
+  teleportSound: {fileID: 8300000, guid: 737242862d9da4ecf950f312068ad5b0, type: 3}
 --- !u!4 &1180897392
 Transform:
   m_ObjectHideFlags: 0
@@ -1770,61 +1886,6 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1281161711}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1473619427
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1473619429}
-  - component: {fileID: 1473619428}
-  m_Layer: 0
-  m_Name: EnemySpawner
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &1473619428
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1473619427}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 392d369026e97464591560ea926fbdf6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyPrefab: {fileID: 3624129501394738970, guid: 5d033c0c68a3ba54598ca0770ce6df3d, type: 3}
-  weaponPrefabs:
-  - {fileID: 2574361922486423382, guid: e7857d2a2bda8dd45a44d6bb851e0491, type: 3}
-  - {fileID: 2574361922486423382, guid: a53bdf555a696b84fa109601ee6b3501, type: 3}
-  target: {fileID: 0}
-  cameraShakeListener: {fileID: 0}
-  enemyDeathEffectListener: {fileID: 0}
-  spawnInterval: 3
-  spawnArea: 70
-  maxEnemies: 3
-  minSpawnDistance: 10
---- !u!4 &1473619429
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1473619427}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -2208,6 +2269,7 @@ MonoBehaviour:
   bowReleaseDelay: 0.2
   afterDelay: 0.3
   muzzleEffectPrefab: {fileID: 0}
+  shootSound: {fileID: 8300000, guid: a1e62c6cf66644e66ab084c9f79b4124, type: 3}
 --- !u!4 &1789487667
 Transform:
   m_ObjectHideFlags: 0
@@ -2659,7 +2721,6 @@ SceneRoots:
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 542561544}
-  - {fileID: 1473619429}
   - {fileID: 2145070040}
   - {fileID: 1956073000}
   - {fileID: 931758845}
@@ -2669,3 +2730,5 @@ SceneRoots:
   - {fileID: 613277172}
   - {fileID: 778426599}
   - {fileID: 1281161713}
+  - {fileID: 304986512}
+  - {fileID: 995829144}

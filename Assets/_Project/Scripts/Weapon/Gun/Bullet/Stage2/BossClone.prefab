@@ -147,6 +147,9 @@ MonoBehaviour:
   firstAttackDelay: 0.8
   bowReleaseDelay: 0.5
   muzzleEffectPrefab: {fileID: 0}
+  shootSound: {fileID: 8300000, guid: f871563045deb4afc957e5da58ab8062, type: 3}
+  hitSound: {fileID: 0}
+  deathSound: {fileID: 0}
 --- !u!1001 &5275599416996240757
 PrefabInstance:
   m_ObjectHideFlags: 0

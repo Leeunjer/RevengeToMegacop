@@ -90,7 +90,22 @@ public abstract class BossEnemy : Enemy
     {
         if (bossState == BossState.Death) return;
         bossState = BossState.Death;
+        StopAllPatterns();
         StartCoroutine(DeathSequence());
+    }
+
+    /// <summary>
+    /// 사망 시 현재 실행 중인 패턴 코루틴을 모두 중단한다.
+    /// 자식 클래스에서 override하여 추가 패턴 배열도 중단할 수 있다.
+    /// </summary>
+    protected virtual void StopAllPatterns()
+    {
+        if (currentPatterns == null) return;
+        for (int i = 0; i < currentPatterns.Length; i++)
+        {
+            if (currentPatterns[i] != null)
+                currentPatterns[i].StopAllCoroutines();
+        }
     }
 
     private IEnumerator DeathSequence()

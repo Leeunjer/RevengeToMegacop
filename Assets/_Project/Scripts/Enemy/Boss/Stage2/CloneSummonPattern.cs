@@ -25,6 +25,9 @@ public class CloneSummonPattern : BossPattern
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private float bulletSpeed = 18f;
 
+    [Header("Sound")]
+    [SerializeField] private AudioClip spawnSound;
+
     protected override void ExecutePattern(BossEnemy boss, Action onComplete)
     {
         StartCoroutine(SummonClones(boss, onComplete));
@@ -55,6 +58,7 @@ public class CloneSummonPattern : BossPattern
             Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * spawnRadius;
             Vector3 spawnPos = boss.transform.position + new Vector3(randomOffset.x, 0f, randomOffset.y);
             GameObject cloneObj = Instantiate(clonePrefab, spawnPos, Quaternion.identity);
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySFXAtPoint(spawnSound, spawnPos);
 
             // BossClone 초기화
             BossClone clone = cloneObj.GetComponent<BossClone>();
