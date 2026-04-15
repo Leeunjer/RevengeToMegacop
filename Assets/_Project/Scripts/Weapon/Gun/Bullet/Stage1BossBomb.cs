@@ -4,6 +4,7 @@ using UnityEngine;
 public class Stage1BossBomb : Bullet
 {
     [SerializeField] private GameObject explosionPrefab;
+    [SerializeField] private AudioClip explosionSound;
     [SerializeField] private float bombSpeed = 8f;
     [SerializeField] private float currentArcHeightRatio = 0.4f; // 거리 대비 호 높이 비율
     [SerializeField] private float minArcHeight = 3f;            // 최소 호 높이 (가까울 때 보장)
@@ -182,6 +183,9 @@ public class Stage1BossBomb : Bullet
                 }
             }
         }
+
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFXAtPoint(explosionSound, transform.position);
 
         if (explosionPrefab != null)
         {

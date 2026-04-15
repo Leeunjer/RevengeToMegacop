@@ -283,6 +283,7 @@ MonoBehaviour:
   destructionThreshold: 0.3
   reflectSpeedMultiplier: 0.7
   minReflectSpeed: 5
+  reflectSound: {fileID: 8300000, guid: 07fc8e492e8b8455e85c2949bf5d6e31, type: 3}
   followTarget: {fileID: 5269960951499735177}
 --- !u!114 &2897134818830045318
 MonoBehaviour:
@@ -665,6 +666,7 @@ MonoBehaviour:
   shotInterval: 0.2
   minShotDuration: 0.5
   maxShotDuration: 2
+  fireSound: {fileID: 8300000, guid: a39308d8faae04ea385e361abdc41e02, type: 3}
 --- !u!114 &4548666451752014564
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -684,6 +686,7 @@ MonoBehaviour:
   missileSpeed: 25
   missileCount: 3
   interval: 0.5
+  missileSound: {fileID: 8300000, guid: 121c62c13ff50437e9eb1c0e34f82a9c, type: 3}
 --- !u!114 &3850946650909196443
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -701,6 +704,7 @@ MonoBehaviour:
   bombPrefab: {fileID: 776963241871654587, guid: 4e2375850ebe645b2b4ad410f56e3ae0, type: 3}
   firePoint: {fileID: 4816680489439899716}
   holdDuration: 0.5
+  bombLaunchSound: {fileID: 8300000, guid: f1834d12f441f42799993f242dbd868e, type: 3}
 --- !u!114 &6274598172816198847
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -718,6 +722,8 @@ MonoBehaviour:
   wavePrefab: {fileID: 82095154474583385, guid: b0a57c086f3b94c40b863628ada2f3dc, type: 3}
   maxRange: 10
   holdDuration: 2
+  waveCastSound: {fileID: 8300000, guid: 5dc0d27bde15c4bb7bafcde9f394bc12, type: 3}
+  waveLoopSound: {fileID: 0}
 --- !u!135 &6373017698198396878
 SphereCollider:
   m_ObjectHideFlags: 0

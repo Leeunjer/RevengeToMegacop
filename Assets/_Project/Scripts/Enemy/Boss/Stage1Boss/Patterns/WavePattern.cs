@@ -7,6 +7,18 @@ public class WavePattern : BossPattern
     [SerializeField] private GameObject wavePrefab;
     [SerializeField] private float maxRange = 10f;
     [SerializeField] private float holdDuration = 3f;
+    [SerializeField] private AudioClip waveCastSound;
+    [SerializeField] private AudioClip waveLoopSound;
+
+    private AudioSource waveLoopSource;
+
+    void Awake()
+    {
+        waveLoopSource = gameObject.AddComponent<AudioSource>();
+        waveLoopSource.loop = true;
+        waveLoopSource.playOnAwake = false;
+        waveLoopSource.spatialBlend = 1f;
+    }
 
     protected override void ExecutePattern(BossEnemy boss, Action onComplete)
     {
@@ -32,10 +44,21 @@ public class WavePattern : BossPattern
 
         yield return new WaitUntil(() => fireReady);
 
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFXAtPoint(waveCastSound, boss.transform.position);
+
         if (wavePrefab != null)
             Instantiate(wavePrefab, boss.transform.position, Quaternion.identity);
 
+        if (waveLoopSound != null)
+        {
+            waveLoopSource.clip = waveLoopSound;
+            waveLoopSource.Play();
+        }
+
         yield return new WaitForSeconds(holdDuration);
+
+        waveLoopSource.Stop();
         stage1Boss?.UnlockLooking();
         stage1Boss?.NotifyPatternEnd();
         onComplete?.Invoke();
