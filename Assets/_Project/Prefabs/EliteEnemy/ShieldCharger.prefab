@@ -577,6 +577,12 @@ MonoBehaviour:
   dashKnockbackDistance: 10
   dashKnockbackHeight: 3
   playerTag: Player
+  dashStartSfx: {fileID: 8300000, guid: 9dc2c0d3c8662974f83b0c686d6921b2, type: 3}
+  dashStartSfxVolume: 1
+  dashHitPlayerSfx: {fileID: 8300000, guid: 25811ac6be833684f957fca702d6cfa0, type: 3}
+  dashHitPlayerSfxVolume: 1
+  blockedBulletSfx: {fileID: 8300000, guid: 5e02760472ded6e4697c6f721101c8a7, type: 3}
+  blockedBulletSfxVolume: 1
 --- !u!136 &4909570027166505212
 CapsuleCollider:
   m_ObjectHideFlags: 0
