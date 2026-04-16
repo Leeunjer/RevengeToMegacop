@@ -516,6 +516,53 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &543782731
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 543782732}
+  - component: {fileID: 543782733}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &543782732
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 543782731}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &543782733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 543782731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f298cfc5dfd43fe44b4474dba93ba2aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioMixer: {fileID: 24100000, guid: c4ce70a378d2c484ea8b15db5d233bcf, type: 2}
+  sfxPoolSize: 8
+  defaultCrossfadeDuration: 1
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -801,17 +848,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 392d369026e97464591560ea926fbdf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPrefab: {fileID: 3624129501394738970, guid: 5d033c0c68a3ba54598ca0770ce6df3d, type: 3}
-  weaponPrefabs:
-  - {fileID: 2574361922486423382, guid: e7857d2a2bda8dd45a44d6bb851e0491, type: 3}
-  - {fileID: 2574361922486423382, guid: a53bdf555a696b84fa109601ee6b3501, type: 3}
   target: {fileID: 0}
   cameraShakeListener: {fileID: 0}
   enemyDeathEffectListener: {fileID: 0}
-  spawnInterval: 3
   spawnArea: 70
-  maxEnemies: 3
   minSpawnDistance: 10
+  interWaveDelay: 3
+  basicEnemyPrefab: {fileID: 0}
+  weaponPrefabs:
+  - {fileID: 2574361922486423382, guid: e7857d2a2bda8dd45a44d6bb851e0491, type: 3}
+  - {fileID: 2574361922486423382, guid: a53bdf555a696b84fa109601ee6b3501, type: 3}
+  wave1EnemyCount: 8
+  wave1MaxConcurrent: 4
+  wave1SpawnInterval: 3
+  wave2EnemyCount: 10
+  wave2MaxConcurrent: 5
+  wave2SpawnInterval: 2.5
+  elitePrefabs: []
+  bossPrefab: {fileID: 0}
 --- !u!4 &1473619429
 Transform:
   m_ObjectHideFlags: 0
@@ -877,10 +931,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 580745402c776854bb8a51184d92f32c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageFlash: {fileID: 1937989342}
-  playerHitController: {fileID: 1986182076}
-  flashIntensity: 0.8
-  flashDuration: 0.3
 --- !u!114 &1603220461
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1236,8 +1286,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df5a22247e32f7c4a9e91d8542840602, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flashImage: {fileID: 1937989343}
-  maximumIntensity: 1
 --- !u!114 &1937989343
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1625,3 +1673,4 @@ SceneRoots:
   - {fileID: 1695656618}
   - {fileID: 51484012}
   - {fileID: 454606817}
+  - {fileID: 543782732}

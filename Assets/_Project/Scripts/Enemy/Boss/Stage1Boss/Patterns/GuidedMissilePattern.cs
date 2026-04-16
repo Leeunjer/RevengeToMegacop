@@ -10,6 +10,7 @@ public class GuidedMissilePattern : BossPattern
     [SerializeField] private float missileSpeed = 10f;
     [SerializeField] private int missileCount = 3;
     [SerializeField] private float interval = 0.5f;
+    [SerializeField] private AudioClip missileSound;
 
     protected override void ExecutePattern(BossEnemy boss, Action onComplete)
     {
@@ -61,5 +62,7 @@ public class GuidedMissilePattern : BossPattern
         missile.Speed = missileSpeed;
         missile.Launch(boss.Target, boss.transform);
         missile.GetComponentInChildren<BulletVFX>()?.PlayMuzzle();
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFXAtPoint(missileSound, origin.position);
     }
 }

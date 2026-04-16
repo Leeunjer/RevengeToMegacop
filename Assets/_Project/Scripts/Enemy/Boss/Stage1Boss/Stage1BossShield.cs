@@ -11,6 +11,7 @@ public class Stage1BossShield : MonoBehaviour, IDamageable
     [SerializeField] private float destructionThreshold = 0.3f;
     [SerializeField] private float reflectSpeedMultiplier = 0.7f;
     [SerializeField] private float minReflectSpeed = 5f;
+    [SerializeField] private AudioClip reflectSound;
     [SerializeField] private Transform followTarget; // 보스 루트 할당
 
     private float shieldGauge;
@@ -107,6 +108,9 @@ public class Stage1BossShield : MonoBehaviour, IDamageable
     private void ReflectToPlayer(Bullet bullet)
     {
         if (_target == null) return;
+
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFXAtPoint(reflectSound, transform.position);
 
         bullet.Reflect(gameObject, true);
         bullet.Speed = Mathf.Max(bullet.Speed * reflectSpeedMultiplier, minReflectSpeed);

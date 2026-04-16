@@ -10,6 +10,7 @@ public class BasicShotPattern : BossPattern
     [SerializeField] private float shotInterval = 0.3f;
     [SerializeField] private float minShotDuration = 1f;
     [SerializeField] private float maxShotDuration = 3f;
+    [SerializeField] private AudioClip fireSound;
 
     protected override void ExecutePattern(BossEnemy boss, Action onComplete)
     {
@@ -68,5 +69,7 @@ public class BasicShotPattern : BossPattern
         bullet.SetOwner(boss.gameObject);
         bullet.Speed = bulletSpeed;
         bullet.GetComponentInChildren<BulletVFX>()?.PlayMuzzle();
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFXAtPoint(fireSound, origin.position);
     }
 }

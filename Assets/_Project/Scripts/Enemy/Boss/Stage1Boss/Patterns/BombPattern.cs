@@ -7,6 +7,7 @@ public class BombPattern : BossPattern
     [SerializeField] private GameObject bombPrefab;
     [SerializeField] private Transform firePoint;
     [SerializeField] private float holdDuration = 1f;
+    [SerializeField] private AudioClip bombLaunchSound;
 
     protected override void ExecutePattern(BossEnemy boss, Action onComplete)
     {
@@ -49,6 +50,8 @@ public class BombPattern : BossPattern
             new Vector3(boss.Target.position.x, 0f, boss.Target.position.z));
         bomb.SetOwner(boss.gameObject);
         bomb.Launch(origin.position, boss.Target.position, bossToPlayerDist);
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFXAtPoint(bombLaunchSound, origin.position);
 
         yield return new WaitForSeconds(holdDuration);
         (boss as Stage1Boss)?.NotifyPatternEnd();
