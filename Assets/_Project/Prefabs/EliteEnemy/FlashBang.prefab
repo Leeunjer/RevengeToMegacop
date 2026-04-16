@@ -162,6 +162,14 @@ MonoBehaviour:
   indicatorMaterial: {fileID: 2100000, guid: dca8115f11b5a214dad08f65ab7f9194, type: 2}
   explodeDelayAfterLanding: 0.75
   destroyOnExplode: 1
+  explosionVfxStartScale: 0.2
+  explosionVfxDuration: 0.12
+  flashbangExplosionClip: {fileID: 8300000, guid: 01504a4b17206f349b1dff70c87f9cc6, type: 3}
+  audioMixer: {fileID: 24100000, guid: c4ce70a378d2c484ea8b15db5d233bcf, type: 2}
+  masterVolumeParameter: MasterVolume
+  lowPassCutoffParameter: LowPassCutoff
+  muffledStartVolumeDb: -20
+  muffledStartCutoff: 800
   flashIntensity: 1
   flashDuration: 1.2
   playerCameraTag: MainCamera

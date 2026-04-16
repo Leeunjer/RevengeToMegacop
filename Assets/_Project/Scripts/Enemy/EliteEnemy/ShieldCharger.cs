@@ -32,6 +32,16 @@ public class ShieldCharger : EliteEnemy
     [SerializeField] private float dashKnockbackHeight = 3f;
     [SerializeField] private string playerTag = "Player";
 
+    [Header("SFX")]
+    [SerializeField] private AudioClip dashStartSfx;
+    [SerializeField][Range(0f, 1f)] private float dashStartSfxVolume = 1f;
+
+    [SerializeField] private AudioClip dashHitPlayerSfx;
+    [SerializeField][Range(0f, 1f)] private float dashHitPlayerSfxVolume = 1f;
+
+    [SerializeField] private AudioClip blockedBulletSfx;
+    [SerializeField][Range(0f, 1f)] private float blockedBulletSfxVolume = 1f;
+
     private static readonly int BaseStateHash = Animator.StringToHash("BaseState");
     private static readonly int LeftArmStateHash = Animator.StringToHash("LeftArmState");
 
@@ -108,6 +118,7 @@ public class ShieldCharger : EliteEnemy
                 EndShootState();
                 stateTimer = dashDuration;
                 hasHitPlayerThisDash = false;
+                PlaySfxAtSelf(dashStartSfx, dashStartSfxVolume);
                 break;
 
             case ShieldChargerState.Recover:
@@ -270,6 +281,7 @@ public class ShieldCharger : EliteEnemy
             return false;
 
         playerStateController.TakeDamage(dashCollisionDamage);
+        PlayDashHitPlayerSfx(other);
         TriggerPlayerHitFeedback(other);
 
         CharacterController characterController = other.GetComponent<CharacterController>();
@@ -304,6 +316,26 @@ public class ShieldCharger : EliteEnemy
             dashKnockbackHeight));
 
         return true;
+    }
+
+    private void PlayDashHitPlayerSfx(Collider other)
+    {
+        if (dashHitPlayerSfx == null || AudioManager.Instance == null)
+            return;
+
+        Vector3 hitPoint = transform.position;
+
+        if (other != null)
+        {
+            hitPoint = other.ClosestPoint(transform.position);
+
+            if (hitPoint == Vector3.zero)
+            {
+                hitPoint = other.transform.position;
+            }
+        }
+
+        AudioManager.Instance.PlaySFXAtPoint(dashHitPlayerSfx, hitPoint, dashHitPlayerSfxVolume);
     }
 
     private void TriggerPlayerHitFeedback(Collider other)
@@ -393,6 +425,7 @@ public class ShieldCharger : EliteEnemy
     {
         if (IsBlockingState())
         {
+            PlaySfxAtSelf(blockedBulletSfx, blockedBulletSfxVolume);
             return;
         }
 
@@ -414,5 +447,13 @@ public class ShieldCharger : EliteEnemy
             default:
                 return false;
         }
+    }
+
+    private void PlaySfxAtSelf(AudioClip clip, float volumeScale = 1f)
+    {
+        if (clip == null || AudioManager.Instance == null)
+            return;
+
+        AudioManager.Instance.PlaySFXAtPoint(clip, transform.position, volumeScale);
     }
 }

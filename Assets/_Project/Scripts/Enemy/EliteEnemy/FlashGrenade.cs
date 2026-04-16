@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.UI;
 
 public class FlashGrenade : MonoBehaviour
@@ -27,6 +29,14 @@ public class FlashGrenade : MonoBehaviour
     [Header("Explosion VFX")]
     [SerializeField] private float explosionVfxStartScale = 0.2f;
     [SerializeField] private float explosionVfxDuration = 0.12f;
+
+    [Header("Explosion SFX")]
+    [SerializeField] private AudioClip flashbangExplosionClip;
+
+    [Header("Flashbang Audio Effect")]
+    [SerializeField] private AudioMixer audioMixer;
+    [SerializeField] private string lowPassCutoffParameter = "LowPassCutoff";
+    [SerializeField] private float muffledStartCutoff = 800f;
 
     [Header("Flash Effect")]
     [SerializeField] private float flashIntensity = 1f;
@@ -152,6 +162,11 @@ public class FlashGrenade : MonoBehaviour
     {
         hasExploded = true;
 
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFXAtPoint(flashbangExplosionClip, transform.position);
+        }
+
         PlayExplosionVfx();
 
         Collider[] hits = Physics.OverlapSphere(transform.position, indicatorRadius);
@@ -179,6 +194,8 @@ public class FlashGrenade : MonoBehaviour
                     softenEndPortion,
                     softenedIntensityRatio
                 );
+
+                StartDetachedMuffleEffect();
             }
 
             break;
@@ -187,12 +204,57 @@ public class FlashGrenade : MonoBehaviour
         if (landingIndicator != null)
         {
             Destroy(landingIndicator);
+            landingIndicator = null;
         }
+
+        HideGrenadeImmediately();
 
         if (destroyOnExplode)
         {
             Destroy(gameObject);
         }
+    }
+
+    private void HideGrenadeImmediately()
+    {
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true;
+            rb.detectCollisions = false;
+        }
+
+        Collider[] colliders = GetComponentsInChildren<Collider>(true);
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            colliders[i].enabled = false;
+        }
+
+        Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            renderers[i].enabled = false;
+        }
+    }
+
+    private void StartDetachedMuffleEffect()
+    {
+        if (audioMixer == null)
+            return;
+
+        GameObject runnerObject = new GameObject("FlashbangAudioMuffleRunner");
+        DetachedMuffleRunner runner = runnerObject.AddComponent<DetachedMuffleRunner>();
+
+        runner.Play(
+            audioMixer,
+            lowPassCutoffParameter,
+            muffledStartCutoff,
+            flashDuration,
+            fullBlindPortion,
+            softenEndPortion,
+            softenedIntensityRatio
+        );
     }
 
     private void PlayExplosionVfx()
@@ -391,6 +453,91 @@ public class FlashGrenade : MonoBehaviour
             }
 
             flashImage.color = new Color(0f, 0f, 0f, alpha);
+        }
+    }
+
+    private class DetachedMuffleRunner : MonoBehaviour
+    {
+        private AudioMixer mixer;
+        private string cutoffParameter;
+        private float startCutoff;
+        private float duration;
+        private float fullBlindPortion;
+        private float softenEndPortion;
+        private float softenedIntensityRatio;
+
+        public void Play(
+            AudioMixer targetMixer,
+            string targetCutoffParameter,
+            float muffledCutoff,
+            float effectDuration,
+            float fullBlind,
+            float softenEnd,
+            float softenedRatio)
+        {
+            mixer = targetMixer;
+            cutoffParameter = targetCutoffParameter;
+            startCutoff = muffledCutoff;
+            duration = effectDuration;
+            fullBlindPortion = Mathf.Clamp01(fullBlind);
+            softenEndPortion = Mathf.Clamp(softenEnd, fullBlindPortion, 1f);
+            softenedIntensityRatio = Mathf.Clamp01(softenedRatio);
+
+            DontDestroyOnLoad(gameObject);
+            StartCoroutine(Run());
+        }
+
+        private IEnumerator Run()
+        {
+            if (mixer == null)
+            {
+                Destroy(gameObject);
+                yield break;
+            }
+
+            float originalCutoff = 22000f;
+            bool hasCutoffParameter = mixer.GetFloat(cutoffParameter, out originalCutoff);
+
+            if (!hasCutoffParameter)
+                originalCutoff = 22000f;
+
+            float middleCutoff = Mathf.Lerp(startCutoff, originalCutoff, 1f - softenedIntensityRatio);
+
+            float elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+
+                float normalizedTime = duration > 0f
+                    ? Mathf.Clamp01(elapsed / duration)
+                    : 1f;
+
+                float currentCutoff;
+
+                if (normalizedTime <= fullBlindPortion)
+                {
+                    currentCutoff = startCutoff;
+                }
+                else if (normalizedTime <= softenEndPortion)
+                {
+                    float t = Mathf.InverseLerp(fullBlindPortion, softenEndPortion, normalizedTime);
+                    currentCutoff = Mathf.Lerp(startCutoff, middleCutoff, t);
+                }
+                else
+                {
+                    float t = Mathf.InverseLerp(softenEndPortion, 1f, normalizedTime);
+                    currentCutoff = Mathf.Lerp(middleCutoff, originalCutoff, t);
+                }
+
+                mixer.SetFloat(cutoffParameter, currentCutoff);
+
+                yield return null;
+            }
+
+            mixer.SetFloat(cutoffParameter, originalCutoff);
+
+            Destroy(gameObject);
         }
     }
 
