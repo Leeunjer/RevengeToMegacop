@@ -14,6 +14,11 @@ public class BossClone : MonoBehaviour, IDamageable
     [SerializeField] private float bowReleaseDelay = 0.5f;
     [SerializeField] private GameObject muzzleEffectPrefab;
 
+    [Header("Sound")]
+    [SerializeField] private AudioClip shootSound;
+    [SerializeField] private AudioClip hitSound;
+    [SerializeField] private AudioClip deathSound;
+
     private static readonly int AttackHash = Animator.StringToHash("Attack");
     private static readonly int DieHash = Animator.StringToHash("Die");
 
@@ -56,6 +61,18 @@ public class BossClone : MonoBehaviour, IDamageable
     {
         if (bullet == null || isDead) return;
         isDead = true;
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX(hitSound);
+        StartCoroutine(DeathSequence());
+    }
+
+    /// <summary>
+    /// 외부(보스 사망 등)에서 클론 사망을 강제 트리거한다. 이미 사망 중이면 무시.
+    /// </summary>
+    public void TriggerDeath()
+    {
+        if (isDead) return;
+        isDead = true;
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX(deathSound);
         StartCoroutine(DeathSequence());
     }
 
@@ -65,13 +82,24 @@ public class BossClone : MonoBehaviour, IDamageable
         {
             animator.SetTrigger(DieHash);
 
+            float timeout = 5f;
+            float elapsed = 0f;
+
             // Die 상태 진입 대기
             while (!animator.GetCurrentAnimatorStateInfo(0).IsName("Die"))
+            {
+                elapsed += Time.deltaTime;
+                if (elapsed >= timeout) break;
                 yield return null;
+            }
 
             // Die 애니메이션 재생 완료 대기
             while (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)
+            {
+                elapsed += Time.deltaTime;
+                if (elapsed >= timeout) break;
                 yield return null;
+            }
         }
 
         Destroy(gameObject);
@@ -109,6 +137,8 @@ public class BossClone : MonoBehaviour, IDamageable
             GameObject effect = Instantiate(muzzleEffectPrefab, firePosition, rotation);
             Destroy(effect, 2f);
         }
+
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX(shootSound);
 
         Bullet bullet = BulletPool.Instance.Get(bulletPrefab, firePosition, rotation);
         bullet.Speed = bulletSpeed;

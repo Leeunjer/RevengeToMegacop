@@ -19,6 +19,7 @@ public class RhythmShotPattern : BossPattern
     [SerializeField] private float bowReleaseDelay = 0.3f;
     [SerializeField] private float afterDelay = 1.5f;
     [SerializeField] private GameObject muzzleEffectPrefab;
+    [SerializeField] private AudioClip shootSound;
 
     protected override void ExecutePattern(BossEnemy boss, Action onComplete)
     {
@@ -75,6 +76,8 @@ public class RhythmShotPattern : BossPattern
             GameObject effect = Instantiate(muzzleEffectPrefab, firePoint.position, rotation);
             Destroy(effect, 2f);
         }
+
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX(shootSound);
 
         Bullet bullet = BulletPool.Instance.Get(bulletPrefab, firePoint.position, rotation);
         bullet.Speed = bulletSpeed;

@@ -18,6 +18,15 @@ public class Stage2Boss : BossEnemy
     [SerializeField] private float knockbackDistance = 1.5f;
     [SerializeField] private float knockbackDuration = 0.15f;
 
+    [Header("Sound")]
+    [SerializeField] private AudioClip hitSound;
+    [SerializeField] private AudioClip deathSound;
+
+    private bool isTeleporting = false;
+
+    /// <summary>순간이동 시작/종료 시 TeleportPattern에서 호출. 텔레포트 중 넉백을 차단한다.</summary>
+    public void SetTeleporting(bool value) { isTeleporting = value; }
+
     /// <summary>화살 발사 기준점. 미설정 시 보스 루트 위치를 사용한다.</summary>
     public Transform WeaponPoint => weaponPoint != null ? weaponPoint : transform;
 
@@ -60,12 +69,18 @@ public class Stage2Boss : BossEnemy
 
         base.Hit(bullet);
 
-        if (Hp < minHpAfterHit)
+        // HP가 0이 됐으면 TriggerDeathSequence가 이미 호출됨 — 복구 금지
+        if (Hp > 0f && Hp < minHpAfterHit)
         {
             SetHp(minHpAfterHit);
         }
 
-        bossAnimator?.PlayHit();
+        // 사망 처리 중에는 Hit 애니메이션 생략 (Die 트리거 방해 방지)
+        if (Hp > 0f)
+        {
+            bossAnimator?.PlayHit();
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX(hitSound);
+        }
         // 반사탄 방향으로 넉백
         Vector3 knockbackDirection = bullet.transform.forward;
         knockbackDirection.y = 0f;
@@ -85,13 +100,18 @@ public class Stage2Boss : BossEnemy
         if (context.SlashVfx != null)
             context.SlashVfx.Play(context.SlicePosition, context.SlashDirection);
 
-        bossAnimator?.PlayHit();
-
         float damage = MaxHp * maxDamagePerHitRatio;
         float newHp = Hp - damage;
         if (newHp < 0f) newHp = 0f;
         SetHp(newHp);
         CheckPhaseTransition();
+
+        // 사망하지 않을 때만 피격 애니메이션 재생 (Die 트리거 방해 방지)
+        if (newHp > 0f)
+        {
+            bossAnimator?.PlayHit();
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX(hitSound);
+        }
 
         if (newHp <= 0f)
             TriggerDeathSequence();
@@ -112,6 +132,23 @@ public class Stage2Boss : BossEnemy
         float newHp = Hp - damage;
         if (newHp < 0f) newHp = 0f;
         SetHp(newHp);
+    }
+
+    protected override void StopAllPatterns()
+    {
+        base.StopAllPatterns();
+        StopPatternArray(phase1Patterns);
+        StopPatternArray(phase2Patterns);
+    }
+
+    private void StopPatternArray(BossPattern[] patterns)
+    {
+        if (patterns == null) return;
+        for (int i = 0; i < patterns.Length; i++)
+        {
+            if (patterns[i] != null)
+                patterns[i].StopAllCoroutines();
+        }
     }
 
     protected override BossPattern[] GetPatternsForPhase(int phaseIndex)
@@ -161,18 +198,19 @@ public class Stage2Boss : BossEnemy
         if (strafeMovement != null) strafeMovement.StopStrafe();
         if (arrowRainPattern != null) arrowRainPattern.StopRain();
 
+        // 분신 사망 트리거 — 보스 애니메이션과 동시에 클론도 사망 연출 시작
+        BossClone[] clones = FindObjectsByType<BossClone>(FindObjectsSortMode.None);
+        for (int i = 0; i < clones.Length; i++)
+        {
+            if (clones[i] != null) clones[i].TriggerDeath();
+        }
+
         // 사망 애니메이션 재생 및 완료 대기
         if (bossAnimator != null)
         {
             bossAnimator.PlayDie();
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX(deathSound);
             yield return StartCoroutine(bossAnimator.WaitForDieAnimation());
-        }
-
-        // 사망 시 모든 분신 제거
-        BossClone[] clones = FindObjectsByType<BossClone>(FindObjectsSortMode.None);
-        for (int i = 0; i < clones.Length; i++)
-        {
-            if (clones[i] != null) Destroy(clones[i].gameObject);
         }
     }
     private IEnumerator KnockbackCoroutine(Vector3 direction)
@@ -183,12 +221,16 @@ public class Stage2Boss : BossEnemy
 
         while (elapsed < knockbackDuration)
         {
+            // 순간이동이 시작됐으면 넉백 취소 (텔레포트 위치를 덮어쓰지 않도록)
+            if (isTeleporting) yield break;
+
             elapsed += Time.deltaTime;
             float ratio = elapsed / knockbackDuration;
             transform.position = Vector3.Lerp(startPosition, endPosition, ratio);
             yield return null;
         }
 
-        transform.position = endPosition;
+        if (!isTeleporting)
+            transform.position = endPosition;
     }
 }

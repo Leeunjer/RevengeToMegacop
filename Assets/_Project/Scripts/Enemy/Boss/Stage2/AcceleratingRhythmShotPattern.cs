@@ -24,6 +24,7 @@ public class AcceleratingRhythmShotPattern : BossPattern
     [SerializeField] private float bowReleaseDelay = 0.3f;
     [SerializeField] private float afterDelay = 1.5f;
     [SerializeField] private GameObject muzzleEffectPrefab;
+    [SerializeField] private AudioClip shootSound;
 
     protected override void ExecutePattern(BossEnemy boss, Action onComplete)
     {
@@ -62,6 +63,7 @@ public class AcceleratingRhythmShotPattern : BossPattern
             baseDirection.y = 0f;
             Quaternion baseRotation = Quaternion.LookRotation(baseDirection);
 
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX(shootSound);
             FireBurst(boss, firePoint, baseRotation);
 
             // 버스트 간격: 점점 짧아짐 (마지막 버스트 이후는 대기 없음)
